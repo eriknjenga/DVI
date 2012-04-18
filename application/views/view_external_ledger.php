@@ -13,7 +13,7 @@ autocomplete_elements[0] = {value: "All Stores", id: "national_0"}
 			
 			$counter = 1;
 			foreach($districts as $district){
-			if($district['id'] == $this->session->userdata("district")){
+			if($district['id'] == $this->session->userdata("external_district")){
 				$current_level = $district['name'];
 			}
 			?>
@@ -24,7 +24,7 @@ autocomplete_elements[0] = {value: "All Stores", id: "national_0"}
 			}
 			if(isset($regions)){
 			foreach($regions as $region){
-			if($region['id'] == $this->session->userdata("region")){
+			if($region['id'] == $this->session->userdata("external_region")){
 				$current_level = $region['name'];
 			}
 			?>
@@ -79,12 +79,14 @@ autocomplete_elements[0] = {value: "All Stores", id: "national_0"}
 	$(".export_link").click(function(){
 		var vaccine_name = $(this).attr("vaccine_name");
 		var vaccine_id = $(this).attr("vaccine");
-		var confirmation_text = "This action will export 200 records in the time period specified for "+vaccine_name +" vaccine.\nAre you sure you want to continue?";
+		var type = $(this).attr("type");
+		var district_or_province = $(this).attr("district_or_province");
+		var confirmation_text = "This action will export ledger records in the time period specified for "+vaccine_name +" vaccine.\nAre you sure you want to continue?";
 		var confirm_export = confirm(confirmation_text);
 		
 		
 		if(confirm_export == true){
-			var export_link = "<?php echo base_url()?>/disbursement_management/export/"+vaccine_id;
+			var export_link = "<?php echo base_url()?>/external_ledger_management/export/"+type+"/"+district_or_province+"/"+vaccine_id;
 			window.location = export_link;
 		}
 		else if(confirm_export == false){
@@ -178,7 +180,7 @@ foreach($vaccines as $vaccine){
 
 
 <table border="0" class="data-table" id = "table_<?php echo $vaccine->id?>">
-<a href="#" class="link export_link" style="margin-left:20px" vaccine="<?php echo $vaccine->id;?>" vaccine_name="<?php echo $vaccine->Name;?>">Export as Excell Sheet</a>
+<a href="#" class="link export_link" style="margin-left:20px" vaccine="<?php echo $vaccine->id;?>" type="<?php echo $type;?>" district_or_province="<?php echo $district_or_province;?>" vaccine_name="<?php echo $vaccine->Name;?>">Export as Excell Sheet</a>
 	<th class="subsection-title" colspan="11">Vaccine Ledger For <?php echo $vaccine->Name?>
 	</th>
 	<tr>
@@ -187,7 +189,6 @@ foreach($vaccines as $vaccine){
 		To/From</th>
 		<th colspan="2">Ammount (Doses)</th>
 		<th rowspan="2">Store Balance in Doses</th>
-		<th rowspan="2">Receiving Store</br>Stock at Hand</th>
 		<th rowspan="2">Voucher Number</th>
 		<th colspan="2">Vaccine Information</th>		
 		<th rowspan="2">Entered By</th>
@@ -198,9 +199,9 @@ foreach($vaccines as $vaccine){
 		<th>Lot/Batch No.</th>
 		<th>Expiry Date</th>
 	</tr>
-	 <tr><td>Balance From Previous Period</td><td colspan="10" style="font-weight:bold"><?php echo $balances[$vaccine->id]?></td></tr>
+	<!-- <tr><td>Balance From Previous Period</td><td colspan="10" style="font-weight:bold"><?php echo $balances[$vaccine->id]?></td></tr> -->
 	<?php
-	$vaccine_totals = $balances[$vaccine->id]; 
+	//$vaccine_totals = $balances[$vaccine->id]; 
 	$vaccine_disbursements = $disbursements[$vaccine->id];
 	if(count($vaccine_disbursements) == 0){?>
 	<tr><td colspan="9">No Records Exist For This Vaccine</td></tr>
@@ -221,7 +222,7 @@ foreach($vaccines as $vaccine){
 			$received = true;
 			?>
 			<td>UNICEF (New Batch)</td>
-			<td style="color: green"><?php $vaccine_totals +=$disbursement->Quantity; echo $disbursement->Quantity?></td>
+			<td style="color: green"><?php /*$vaccine_totals +=$disbursement->Quantity;*/ echo $disbursement->Quantity?></td>
 			<td></td>
 			<?php 
  
@@ -230,12 +231,12 @@ foreach($vaccines as $vaccine){
 			if($disbursement->Issued_To_Region != null){?>
 			<td><a class="link" href="<?php echo site_url("disbursement_management/drill_down/0/".$disbursement->Issued_To_Region);?>"><?php echo $disbursement->Region_Issued_To->name?></a></td>
 			<td></td>
-			<td style="color: red"><?php $vaccine_totals -=$disbursement->Quantity; echo $disbursement->Quantity?></td>
+			<td style="color: red"><?php /*$vaccine_totals -=$disbursement->Quantity;*/ echo $disbursement->Quantity?></td>
 			<?php }
 			else if( $disbursement->Issued_To_District != null){?>
 			<td><a class="link" href="<?php echo site_url("disbursement_management/drill_down/1/".$disbursement->Issued_To_District);?>"><?php echo $disbursement->District_Issued_To->name?></a></td>
 			<td></td>
-			<td style="color: red"><?php $vaccine_totals -=$disbursement->Quantity; echo $disbursement->Quantity?></td>
+			<td style="color: red"><?php /*$vaccine_totals -=$disbursement->Quantity;*/ echo $disbursement->Quantity?></td>
 			<?php }
 			}		
 
@@ -246,14 +247,14 @@ foreach($vaccines as $vaccine){
 		$received = true;
 		?>
 		<td><?php echo $disbursement->Region_Issued_By->name?></td>
-		<td style="color: green"><?php $vaccine_totals +=$disbursement->Quantity; echo $disbursement->Quantity?></td>
+		<td style="color: green"><?php /*$vaccine_totals +=$disbursement->Quantity;*/ echo $disbursement->Quantity?></td>
 		<td></td>
 		<?php }
 		else if($disbursement->Issued_By_National == "0"){
 		$received = true;
 		?>
 		<td>National Store</td>
-		<td style="color: green"><?php $vaccine_totals +=$disbursement->Quantity; echo $disbursement->Quantity?></td>
+		<td style="color: green"><?php /*$vaccine_totals +=$disbursement->Quantity;*/ echo $disbursement->Quantity?></td>
 		<td></td>
 		<?php }
 		}
@@ -261,12 +262,12 @@ foreach($vaccines as $vaccine){
 		if($disbursement->Issued_To_Region != null){?>
 		<td><a class="link" href="<?php echo site_url("disbursement_management/drill_down/0/".$disbursement->Issued_To_Region);?>"><?php echo $disbursement->Region_Issued_To->name?></a></td>
 		<td></td>
-		<td style="color: red"><?php $vaccine_totals -=$disbursement->Quantity; echo $disbursement->Quantity?></td>
+		<td style="color: red"><?php /*$vaccine_totals -=$disbursement->Quantity;*/ echo $disbursement->Quantity?></td>
 		<?php }
 		else if( $disbursement->Issued_To_District != null){?>
 		<td><a class="link" href="<?php echo site_url("disbursement_management/drill_down/1/".$disbursement->Issued_To_District);?>"><?php echo $disbursement->District_Issued_To->name?></a></td>
 		<td></td>
-		<td style="color: red"><?php $vaccine_totals -=$disbursement->Quantity; echo $disbursement->Quantity?></td>
+		<td style="color: red"><?php /*$vaccine_totals -=$disbursement->Quantity;*/ echo $disbursement->Quantity?></td>
 		<?php }
 		}
 		}
@@ -276,21 +277,21 @@ foreach($vaccines as $vaccine){
 		$received = true;
 		?>
 		<td><?php echo $disbursement->Region_Issued_By->name?></td>
-		<td style="color: green"><?php $vaccine_totals +=$disbursement->Quantity; echo $disbursement->Quantity?></td>
+		<td style="color: green"><?php /*$vaccine_totals +=$disbursement->Quantity;*/ echo $disbursement->Quantity?></td>
 		<td></td>
 		<?php }
 		else if($disbursement->Issued_By_National == "0"){
 		$received = true;
 		?>
 		<td>National Store</td>
-		<td style="color: green"><?php $vaccine_totals +=$disbursement->Quantity; echo $disbursement->Quantity?></td>
+		<td style="color: green"><?php /*$vaccine_totals +=$disbursement->Quantity;*/ echo $disbursement->Quantity?></td>
 		<td></td>
 		<?php }
 		else if($disbursement->Issued_By_District != null){
 		$received = true;
 		?>
 		<td><?php echo $disbursement->District_Issued_By->name?></td>
-		<td style="color: green"><?php $vaccine_totals +=$disbursement->Quantity; echo $disbursement->Quantity?></td>
+		<td style="color: green"><?php /*$vaccine_totals +=$disbursement->Quantity;*/ echo $disbursement->Quantity?></td>
 		<td></td>
 		<?php }
 		}
@@ -298,18 +299,17 @@ foreach($vaccines as $vaccine){
 		if( $disbursement->Issued_To_District != null){?>
 		<td><a class="link" href="<?php echo site_url("disbursement_management/drill_down/1/".$disbursement->Issued_To_District);?>"><?php echo $disbursement->District_Issued_To->name?></a></td>
 		<td></td>
-		<td style="color: red"><?php $vaccine_totals -=$disbursement->Quantity; echo $disbursement->Quantity?></td>
+		<td style="color: red"><?php /*$vaccine_totals -=$disbursement->Quantity;*/ echo $disbursement->Quantity?></td>
 		<?php }
 		else if($disbursement->Issued_To_Facility != null){?>
 		<td><?php echo $disbursement->Facility_Issued_To->name?></td>
 		<td></td>
-		<td style="color: red"><?php $vaccine_totals -=$disbursement->Quantity; echo $disbursement->Quantity?></td>
+		<td style="color: red"><?php /*$vaccine_totals -=$disbursement->Quantity;*/ echo $disbursement->Quantity?></td>
 		<?php }
 		}
 		}?>
 		<!--<td><?php echo $vaccine_totals;?></td>-->
 		<td><?php echo $disbursement->Total_Stock_Balance;?></td>
-		<td><?php echo $disbursement->Stock_At_Hand + $disbursement->Quantity;?></td>
 		<td><?php echo $disbursement->Voucher_Number;?></td>
 		<?php if($disbursement->Batch_Number != null){?>
 		<td><?php echo $disbursement->Batch_Number?></td>

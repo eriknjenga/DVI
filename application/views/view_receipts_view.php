@@ -64,21 +64,7 @@ function cleanup(){
  
 <div class="section_title"><?php echo $title;?></div>
 <a class="link" style="margin:5px;" href="<?php echo base_url().'external_ledger_management/view_ledger/'.$type.'/'.$id;?>">View Store Ledger for <span style="color:#E01B4C;"><?php echo $recipient;?></span>  </a>
-<div class="filter">
-<fieldset>
-<legend>Filter Options</legend>
-<?php 
-$url = "disbursement_management/drill_down/".$type."/".$id;
-echo form_open($url);?>
-<label for="from">From</label>
-<input type="text" id="from" name="from"/>
-<label for="to">to</label>
-<input type="text" id="to" name="to"/>
-<input type="submit" class="button" name="submit" value="Filter"/>
-</form>
-</fieldset>
 
-</div>
 
 
 <?php

@@ -109,15 +109,26 @@ class Disbursements extends Doctrine_Record {
 	}
 
 	//Function for getting the total number of regional disbursements in a given period!
-	public static function getTotalRegionalDisbursements($region, $vaccine, $from, $to) {
-		$query = Doctrine_Query::create() -> select("COUNT(*) as Total_Disbursements") -> from("Disbursements") -> where("(Issued_By_Region = '$region' or Issued_To_Region = '$region') and Vaccine_Id = '$vaccine' and Date_Issued_Timestamp between '$from' and '$to'") -> orderBy("Date_Issued_Timestamp desc");
+	public static function getTotalRegionalDisbursements($region, $vaccine, $from, $to, $district_store, $regional_store) {
+		if ($district_store > 0) {
+			$query = Doctrine_Query::create() -> select("COUNT(*) as Total_Disbursements") -> from("Disbursements") -> where("(Issued_By_Region = '$region' or Issued_To_Region = '$region') and Issued_To_District = '$district_store' and Vaccine_Id = '$vaccine' and Date_Issued_Timestamp between '$from' and '$to'") -> orderBy("Date_Issued_Timestamp desc");
+		} elseif ($regional_store > 0) {
+			$query = Doctrine_Query::create() -> select("COUNT(*) as Total_Disbursements") -> from("Disbursements") -> where("(Issued_By_Region = '$region' or Issued_To_Region = '$region') and Issued_To_Region = '$regional_store' and Vaccine_Id = '$vaccine' and Date_Issued_Timestamp between '$from' and '$to'") -> orderBy("Date_Issued_Timestamp desc");
+		} else {
+			$query = Doctrine_Query::create() -> select("COUNT(*) as Total_Disbursements") -> from("Disbursements") -> where("(Issued_By_Region = '$region' or Issued_To_Region = '$region') and Vaccine_Id = '$vaccine' and Date_Issued_Timestamp between '$from' and '$to'") -> orderBy("Date_Issued_Timestamp desc");
+		}
+
 		$count = $query -> execute();
 		return $count[0] -> Total_Disbursements;
 	}
 
 	//Function for getting the total number of district disbursements in a given period!
-	public static function getTotalDistrictDisbursements($district, $vaccine, $from, $to) {
-		$query = Doctrine_Query::create() -> select("COUNT(*) as Total_Disbursements") -> from("Disbursements") -> where("(Issued_By_District = '$district' or Issued_To_District = '$district') and Vaccine_Id = '$vaccine' and Date_Issued_Timestamp between '$from' and '$to'") -> orderBy("Date_Issued_Timestamp desc");
+	public static function getTotalDistrictDisbursements($district, $vaccine, $from, $to, $district_store) {
+		if ($district_store > 0) {
+			$query = Doctrine_Query::create() -> select("COUNT(*) as Total_Disbursements") -> from("Disbursements") -> where("(Issued_By_District = '$district' or Issued_To_District = '$district') and Issued_To_District = '$district_store' and Vaccine_Id = '$vaccine' and Date_Issued_Timestamp between '$from' and '$to'") -> orderBy("Date_Issued_Timestamp desc");
+		} else {
+			$query = Doctrine_Query::create() -> select("COUNT(*) as Total_Disbursements") -> from("Disbursements") -> where("(Issued_By_District = '$district' or Issued_To_District = '$district') and Vaccine_Id = '$vaccine' and Date_Issued_Timestamp between '$from' and '$to'") -> orderBy("Date_Issued_Timestamp desc");
+		}
 		$count = $query -> execute();
 		return $count[0] -> Total_Disbursements;
 	}
@@ -152,7 +163,7 @@ class Disbursements extends Doctrine_Record {
 		return $disbursements;
 	}
 
-	public static function getDistrictDisbursements($district, $vaccine, $from, $to, $offset, $items, $order_by, $order, $district_store = 0,$balance = 0) {
+	public static function getDistrictDisbursements($district, $vaccine, $from, $to, $offset, $items, $order_by, $order, $district_store = 0, $balance = 0) {
 		$balance_sql = "SET @stock_in = $balance";
 		Doctrine_Manager::getInstance() -> getCurrentConnection() -> standaloneQuery($balance_sql) -> execute();
 		Doctrine_Manager::getInstance() -> getCurrentConnection() -> standaloneQuery('SET @stock_out = 0;') -> execute();
@@ -223,7 +234,7 @@ class Disbursements extends Doctrine_Record {
 	}
 
 	//Get Totals of What a regional Store has issued in a given period.
-	public static function getRegionalIssuesTotals($vaccine, $from, $to,$region) {
+	public static function getRegionalIssuesTotals($vaccine, $from, $to, $region) {
 		$query = Doctrine_Query::create() -> select("sum(Quantity) as Total") -> from("Disbursements") -> where("Issued_By_Region = '$region' and Vaccine_Id = '$vaccine' and Date_Issued_Timestamp between '$from' and '$to'");
 		$totals = $query -> execute();
 		$accumulated_issues = $totals[0]['Total'];
