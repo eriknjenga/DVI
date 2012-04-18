@@ -1,0 +1,1 @@
+<p>&copy <?php echo date('Y');?> MOH KENYA All rights Reserved</p>
