@@ -201,7 +201,7 @@ class Disbursement_Management extends MY_Controller {
 				if ($vaccine -> id == $paged_vaccine) {
 					continue;
 				}
-				$total_disbursements = Disbursements::getTotalRegionalDisbursements($district_or_province, $vaccine -> id, $from, $to);
+				$total_disbursements = Disbursements::getTotalRegionalDisbursements($district_or_province, $vaccine -> id, $from, $to,$district,$region);
 
 				if ($total_disbursements > $items_per_page) {
 					$config['base_url'] = base_url() . "disbursement_management/view_disbursements/" . $vaccine -> id . "/" . $from . "/" . $to;
@@ -223,7 +223,7 @@ class Disbursement_Management extends MY_Controller {
 
 			if ($paged_vaccine != null) {
 				$data['paged_vaccine'] = $paged_vaccine;
-				$total_disbursements = Disbursements::getTotalRegionalDisbursements($district_or_province, $paged_vaccine, $from, $to);
+				$total_disbursements = Disbursements::getTotalRegionalDisbursements($district_or_province, $paged_vaccine, $from, $to,$district,$region);
 
 				if ($total_disbursements > $items_per_page) {
 					$config['base_url'] = base_url() . "disbursement_management/view_disbursements/" . $paged_vaccine . "/" . $from . "/" . $to;
@@ -247,7 +247,7 @@ class Disbursement_Management extends MY_Controller {
 				if ($vaccine -> id == $paged_vaccine) {
 					continue;
 				}
-				$total_disbursements = Disbursements::getTotalDistrictDisbursements($district_or_province, $vaccine -> id, $from, $to);
+				$total_disbursements = Disbursements::getTotalDistrictDisbursements($district_or_province, $vaccine -> id, $from, $to,$district);
 
 				if ($total_disbursements > $items_per_page) {
 					$config['base_url'] = base_url() . "disbursement_management/view_disbursements/" . $vaccine -> id . "/" . $from . "/" . $to;
@@ -269,7 +269,7 @@ class Disbursement_Management extends MY_Controller {
 
 			if ($paged_vaccine != null) {
 				$data['paged_vaccine'] = $paged_vaccine;
-				$total_disbursements = Disbursements::getTotalDistrictDisbursements($district_or_province, $paged_vaccine, $from, $to);
+				$total_disbursements = Disbursements::getTotalDistrictDisbursements($district_or_province, $paged_vaccine, $from, $to,$district);
 
 				if ($total_disbursements > $items_per_page) {
 					$config['base_url'] = base_url() . "disbursement_management/view_disbursements/" . $paged_vaccine . "/" . $from . "/" . $to;
