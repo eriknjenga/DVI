@@ -33,6 +33,7 @@ $Stock_At_Hand= "";
 
 <script type="text/javascript">
 $(document).ready(function() {
+	$("#add_disbursement_form").validationEngine();
 	//Create Javascript Array for holding all autocomplete suggestions. They are not too many
 	var autocomplete_elements = Array();
 	<?php 
@@ -119,6 +120,7 @@ $(document).ready(function() {
 	$("#vaccine_<?php echo $Vaccine_Id;?>").click();
 	<?php }
 	?>
+	$(".vaccine_name")[0].click();
 	});
 function cleanup(){
 	$("#reset_vaccine_form").click();
@@ -128,7 +130,7 @@ function cleanup(){
 </script>
 
 <div id="form_area"><?php
-$attributes = array('enctype' => 'multipart/form-data');
+$attributes = array('enctype' => 'multipart/form-data','id'=>'add_disbursement_form');
 if(isset($edit)){
 echo form_open('disbursement_management/save/'.$id,$attributes);
 }
@@ -159,7 +161,7 @@ echo validation_errors('
 			<td><?php
 
 			$data_date_issued= array(
-				'name'        => 'date_issued', 'id'=>'date_issued', 'value' =>$Date_Issued
+				'name'        => 'date_issued', 'id'=>'date_issued', 'value' =>$Date_Issued,'class'=>'validate[required]'
 				);
 				echo form_input($data_date_issued); ?></td>
 		</tr>
@@ -169,7 +171,7 @@ echo validation_errors('
 			<td><?php
 
 			$data_issued_to= array(
-				 'name'        => 'issued_to', 'id'=>'issued_to' 
+				 'name'        => 'issued_to', 'id'=>'issued_to' ,'class'=>'validate[required]'
 				 );
 				 echo form_input($data_issued_to); ?></td>
 		</tr>
@@ -179,7 +181,7 @@ echo validation_errors('
 
 			$data_doses = array(
 				 'name'        => 'doses',
-					'id' => 'doses', 'value' =>$Quantity
+					'id' => 'doses', 'value' =>$Quantity,'class'=>'validate[required,custom[integer]]'
 				 );
 				 echo form_input($data_doses); ?></td>
 		</tr>

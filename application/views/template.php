@@ -18,7 +18,8 @@ if ($this -> session -> userdata('user_identifier') == 'national_officer') {
 if ($this -> session -> userdata('user_identifier') == 'district_officer') {
 	$district_only = true;
 }
-if ($this -> session -> userdata('user_identifier') == 'region_officer') {
+if ($this -> session -> userdata('user_identifier') == 'provincial_officer') {
+	 
 	$region_only = true;
 }
 ?>
@@ -97,7 +98,7 @@ $user_levels = array("Administrator", "National Level", "Provincial Store", "Dis
 ?>
 <span class="login_details" style="color: #E01B4C">Access Level:</span><?php echo $this -> session -> userdata('user_group_name');?><br>
 <span class="login_details">Date:</span><?php echo date("d-m-Y");?><br>
-<a class="link" href="#"  >Edit My details</a> -
+<a class="link" href="<?php echo site_url("user_management/change_password");?>"  >Change Password</a> -
 <a class="link" href="<?php echo site_url("user_management/logout");?>"  >Logout</a>
 </div>
 </div>

@@ -17,6 +17,27 @@ class User_Management extends MY_Controller {
 		$this -> load -> view('login_view', $data);
 	}
 
+	public function change_password() {
+		$data = array();
+		$data['title'] = "Change User Password";
+		$data['content_view'] = "change_password_v";
+		$data['quick_link'] = "user_management";
+		$data['banner_text'] = "Change Pass";
+		$this -> load -> view('template', $data);
+	}
+
+	public function save_new_password() {
+		$valid = $this -> _submit_validate_password();
+		if ($valid) {
+			$user = User::getUser($this -> session -> userdata('user_id'));
+			$user -> Password = $this -> input -> post("new_password");
+			$user -> save();
+			redirect("user_management/logout");
+		} else {
+			$this -> change_password();
+		}
+	}
+
 	public function listing($offset = 0) {
 		$items_per_page = 20;
 		$number_of_users = User::getTotalNumber();
@@ -125,12 +146,14 @@ class User_Management extends MY_Controller {
 			$this -> load -> view("login_view", $data);
 		}
 	}
+
 	public function change_availability($code, $availability) {
 		$user = User::getUser($code);
 		$user -> Disabled = $availability;
 		$user -> save();
 		redirect("user_management/listing");
 	}
+
 	private function _submit_validate($user = false) {
 		// validation rules
 		$this -> form_validation -> set_rules('name', 'Full Name', 'trim|required|min_length[2]|max_length[50]');
@@ -140,7 +163,7 @@ class User_Management extends MY_Controller {
 		if ($temp_validation) {
 			//If the user is editing, if the username changes, check whether the new username exists!
 			if ($user) {
-				if($user->Username != $this->input->post('username')){
+				if ($user -> Username != $this -> input -> post('username')) {
 					$this -> form_validation -> set_rules('username', 'Username', 'trim|required|callback_unique_username');
 				}
 			} else {
@@ -154,6 +177,34 @@ class User_Management extends MY_Controller {
 
 	}
 
+	private function _submit_validate_password() {
+		// validation rules
+		$this -> form_validation -> set_rules('old_password', 'Current Password', 'trim|required|min_length[6]|max_length[20]');
+		$this -> form_validation -> set_rules('new_password', 'New Password', 'trim|required|min_length[6]|max_length[20]|matches[new_password_confirm]');
+		$this -> form_validation -> set_rules('new_password_confirm', 'New Password Confirmation', 'trim|required|min_length[6]|max_length[20]');
+		$temp_validation = $this -> form_validation -> run();
+		if ($temp_validation) {
+			$this -> form_validation -> set_rules('old_password', 'Current Password', 'trim|required|callback_correct_current_password');
+			return $this -> form_validation -> run();
+		} else {
+			return $temp_validation;
+		}
+
+	}
+
+	public function correct_current_password($pass) {
+		$user = User::getUser($this -> session -> userdata('user_id'));
+		$dummy_user = new User();
+		$dummy_user -> Password = $pass;
+		if ($user -> Password != $dummy_user -> Password) {
+			$this -> form_validation -> set_message('correct_current_password', 'The current password you provided is not correct.');
+			return FALSE;
+		} else {
+			return TRUE;
+		}
+
+	}
+
 	public function unique_username($usr) {
 		$exists = User::userExists($usr);
 		if ($exists) {
@@ -163,7 +214,7 @@ class User_Management extends MY_Controller {
 			return TRUE;
 		}
 
-	} 
+	}
 
 	function logout() {
 		$this -> session -> sess_destroy();

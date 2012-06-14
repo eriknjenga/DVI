@@ -54,7 +54,7 @@ class Batches extends Doctrine_Record {
 	}
 
 	public function getVaccineBatches($vaccine,$offset, $items) {
-		$query = Doctrine_Query::create() -> select("*") -> from("Batches")->where("Vaccine_Id = '$vaccine'")->orderBy('id') -> offset($offset) -> limit($items);
+		$query = Doctrine_Query::create() -> select("*") -> from("Batches")->where("Vaccine_Id = '$vaccine'")->orderBy('id desc') -> offset($offset) -> limit($items);
 		$batches = $query -> execute();
 		return $batches;
 	}

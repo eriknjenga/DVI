@@ -114,6 +114,7 @@ class Batch_Management extends MY_Controller {
 				$batch -> Quantity = str_replace(",", "", $this -> input -> post("quantity"));
 				$batch -> Timestamp = date("U");
 				$batch -> Added_By = $this -> session -> userdata('user_id');
+				
 				$batch -> Year = date('Y');
 				$batch -> save();
 
@@ -127,6 +128,7 @@ class Batch_Management extends MY_Controller {
 				$disbursement -> Added_By = $this -> session -> userdata('user_id');
 				$disbursement -> Stock_At_Hand = Disbursements::getNationalPeriodBalance($this -> input -> post("vaccine_id"), date("U"));
 				$disbursement -> Date_Issued_Timestamp = strtotime($this -> input -> post('arrival_date'));
+				$disbursement -> Owner = "N0";
 				$disbursement -> save();
 				redirect("batch_management");
 			}

@@ -28,6 +28,7 @@ $this->load->view('vaccine_tabs');
 
 <script type="text/javascript">
 $(document).ready(function() {
+	$("#add_batch_form").validationEngine();
 	var default_datepicker_options = {"changeMonth": true, "changeYear": true};
 	$( "#expiry_date" ).datepicker(default_datepicker_options);
 	$( "#manufacturing_date" ).datepicker(default_datepicker_options);
@@ -43,7 +44,7 @@ function cleanup(){
 </script>
 <div class="section_title"><?php echo $title;?></div>
 <?php
-$attributes = array("method"=>"POST");
+$attributes = array("method"=>"POST",'id'=>'add_batch_form');
 if(isset($batch)){
 echo form_open('batch_management/save_batch/'.$id,$attributes);
 }
@@ -82,7 +83,7 @@ echo validation_errors('
 			<td><?php
 
 			$data_quantity = array(
-				 'name'        => 'quantity', 'value' =>$quantity
+				 'name'        => 'quantity','id'=>'quantity', 'value' =>$quantity,'class'=>'validate[required,custom[integer]]'
 				 );
 				 echo form_input($data_quantity); ?></td>
 		</tr>
@@ -91,7 +92,7 @@ echo validation_errors('
 			<td><?php
 
 			$data_arrival_date = array(
-				 'name'        => 'arrival_date','id'=>"arrival_date", 'value' =>$arrival_date
+				 'name'        => 'arrival_date','id'=>"arrival_date", 'value' =>$arrival_date,'class'=>'validate[required]'
 				 );
 				 echo form_input($data_arrival_date); ?></td>
 		</tr>

@@ -213,6 +213,7 @@ foreach($vaccines as $vaccine){
 
 	foreach($vaccine_disbursements as $disbursement){
 		$received = false;
+		$store_identity = "";
 		$date = $disbursement->Date_Issued;
 		$timestamp = strtotime($date);
 	?>
@@ -223,7 +224,8 @@ foreach($vaccines as $vaccine){
 		<?php
 		//retrieve user identifier
 		$identifier = $this->session->userdata('user_identifier');
-		if($identifier == "national_officer"){ 
+		if($identifier == "national_officer"){
+			$store_identity = "N0"; 
 			if($disbursement->Issued_To_National == "0"){
 			$received = true;
 			?>
@@ -248,6 +250,7 @@ foreach($vaccines as $vaccine){
 
 		}
 		else if($identifier == "provincial_officer"){
+		$store_identity = "R".$this->session->userdata('district_province_id'); 
 		if($disbursement->Issued_To_Region == $this->session->userdata('district_province_id')){
 		if($disbursement->Issued_By_Region != null){
 		$received = true;
@@ -278,6 +281,7 @@ foreach($vaccines as $vaccine){
 		}
 		}
 		else if($identifier== "district_officer"){
+			$store_identity = "D".$this->session->userdata('district_province_id');
 		if($disbursement->Issued_To_District == $this->session->userdata('district_province_id')){
 		if($disbursement->Issued_By_Region != null){
 		$received = true;
@@ -336,9 +340,15 @@ foreach($vaccines as $vaccine){
 		if(!$received){?>
 		<a href="<?php echo base_url()."disbursement_management/new_disbursement/".$disbursement->id?>" class="link">Edit</a> | 
 		<a class="link delete" disbursement = "<?php echo $disbursement->id?>">Delete</a>
+		<?php 
+		}
+		
+		else if($received && $disbursement->Owner == $store_identity && $disbursement->Batch_Id == ""){?>
+		<a href="<?php echo base_url()."disbursement_management/add_receipt/".$disbursement->id?>" class="link">Edit</a> | 
+		<a class="link delete" disbursement = "<?php echo $disbursement->id?>">Delete</a>
 		<?php }
-		if($received && $timestamp>$archive_timestamp){
-		echo "None";
+		else{
+			echo "None";
 		}
 		?>
 		</td>
