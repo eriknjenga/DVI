@@ -317,7 +317,13 @@ foreach($vaccines as $vaccine){
 		<td style="color: red"><?php $vaccine_totals -=$disbursement->Quantity; echo $disbursement->Quantity?></td>
 		<?php }
 		}
-		}?>
+		}
+		if($disbursement->Issued_To_Region=='' && $disbursement->Issued_To_National=='' && $disbursement->Issued_To_District==''){?>
+			<td>Physical Stock Count</td>
+			<td>-</td>
+			<td>-</td>
+		<?php }
+		?>
 		<!--<td><?php echo $vaccine_totals;?></td>-->
 		<td><?php echo $disbursement->Total_Stock_Balance;?></td>
 		<td><?php echo $disbursement->Stock_At_Hand + $disbursement->Quantity;?></td>
@@ -337,16 +343,21 @@ foreach($vaccines as $vaccine){
 		<td><?php echo $disbursement->User->Full_Name?></td>
 		<td>
 		<?php 
-		if(!$received){?>
+
+		
+		if($received && $disbursement->Owner == $store_identity && $disbursement->Batch_Id == ""){?>
+		<a href="<?php echo base_url()."disbursement_management/add_receipt/".$disbursement->id?>" class="link">Edit</a> | 
+		<a class="link delete" disbursement = "<?php echo $disbursement->id?>">Delete</a>
+		<?php }
+		else if($disbursement->Issued_To_Region=='' && $disbursement->Issued_To_National=='' && $disbursement->Issued_To_District==''){?>
+		<a href="<?php echo base_url()."disbursement_management/stock_count/".$disbursement->id?>" class="link">Edit</a> | 
+		<a class="link delete" disbursement = "<?php echo $disbursement->id?>">Delete</a>
+		<?php }
+		else if(!$received){?>
 		<a href="<?php echo base_url()."disbursement_management/new_disbursement/".$disbursement->id?>" class="link">Edit</a> | 
 		<a class="link delete" disbursement = "<?php echo $disbursement->id?>">Delete</a>
 		<?php 
 		}
-		
-		else if($received && $disbursement->Owner == $store_identity && $disbursement->Batch_Id == ""){?>
-		<a href="<?php echo base_url()."disbursement_management/add_receipt/".$disbursement->id?>" class="link">Edit</a> | 
-		<a class="link delete" disbursement = "<?php echo $disbursement->id?>">Delete</a>
-		<?php }
 		else{
 			echo "None";
 		}

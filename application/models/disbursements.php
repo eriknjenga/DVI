@@ -161,9 +161,11 @@ class Disbursements extends Doctrine_Record {
 		} else {
 
 			if ($order == "DESC") {
-				$query -> addComponent('d', 'Disbursements') -> select('{d.Date_Issued},{d.Issued_To_National},{d.Issued_To_Region},{d.Issued_To_District},{d.Quantity},{d.Vaccine_Id},{d.Batch_Number},{d.Voucher_Number},{d.Added_By},{d.Stock_At_Hand},{d.Total_Stock_In},{d.Total_Stock_Out},{d.Total_Stock_Balance}') -> from("(SELECT id,Date_Issued,Issued_To_National,Issued_To_Region,Issued_To_District,Quantity,Vaccine_Id,Batch_Number,Voucher_Number,Added_By,Stock_At_Hand, (case when Issued_By_Region='$region' then (@stock_out := @stock_out - Quantity) end) as total_stock_out, (case when Issued_To_Region='$region' then (@stock_in := @stock_in - Quantity) end) as total_stock_in, (@stock_balance := @stock_in - @stock_out) as total_stock_balance FROM Disbursements d where (Issued_By_Region = '$region' or Issued_To_Region = '$region')  and Vaccine_Id = '$vaccine' and Date_Issued_Timestamp between '$from' and '$to' and Owner = '$owner' order by $order_by $order) d") -> offset($offset) -> limit($items);
+				$query -> addComponent('d', 'Disbursements') -> select('{d.Date_Issued},{d.Issued_To_National},{d.Issued_To_Region},{d.Issued_To_District},{d.Quantity},{d.Vaccine_Id},{d.Batch_Number},{d.Voucher_Number},{d.Added_By},{d.Stock_At_Hand},{d.Total_Stock_In},{d.Total_Stock_Out},{d.Total_Stock_Balance}') -> from("(SELECT id,Date_Issued,Issued_To_National,Issued_To_Region,Issued_To_District,Quantity,Vaccine_Id,Batch_Number,Voucher_Number,Added_By,Stock_At_Hand, (case when Issued_By_Region='$region' then (@stock_out := @stock_out + Quantity) else case when total_stock_balance > 0 then @stock_out :=0 end  end) as total_stock_out, (case when Issued_To_Region='$region' then (@stock_in := @stock_in + Quantity) else case when total_stock_balance > 0 then @stock_in :=total_stock_balance end end) as total_stock_in, (case when total_stock_balance > 0 then @stock_balance :=total_stock_balance else @stock_balance := @stock_in - @stock_out end) as total_stock_balance FROM Disbursements d where Vaccine_Id = '$vaccine' and Date_Issued_Timestamp between '$from' and '$to' and Owner = '$owner' order by Unix_Timestamp(str_to_date(Date_Issued,'%m/%d/%Y')) asc) d") -> orderBy("Unix_Timestamp(str_to_date(Date_Issued,'%m/%d/%Y')) desc")->offset($offset) -> limit($items);
 			} else {
-				$query -> addComponent('d', 'Disbursements') -> select('{d.Date_Issued},{d.Issued_To_National},{d.Issued_To_Region},{d.Issued_To_District},{d.Quantity},{d.Vaccine_Id},{d.Batch_Number},{d.Voucher_Number},{d.Added_By},{d.Stock_At_Hand},{d.Total_Stock_In},{d.Total_Stock_Out},{d.Total_Stock_Balance}') -> from("(SELECT id,Date_Issued,Issued_To_National,Issued_To_Region,Issued_To_District,Quantity,Vaccine_Id,Batch_Number,Voucher_Number,Added_By,Stock_At_Hand, (case when Issued_By_Region='$region' then (@stock_out := @stock_out + Quantity) end) as total_stock_out, (case when Issued_To_Region='$region' then (@stock_in := @stock_in + Quantity) end) as total_stock_in, (@stock_balance := @stock_in - @stock_out) as total_stock_balance FROM Disbursements d where (Issued_By_Region = '$region' or Issued_To_Region = '$region')  and Vaccine_Id = '$vaccine' and Date_Issued_Timestamp between '$from' and '$to' and Owner = '$owner' order by $order_by $order) d") -> offset($offset) -> limit($items);
+				//$query -> addComponent('d', 'Disbursements') -> select('{d.Date_Issued},{d.Issued_To_National},{d.Issued_To_Region},{d.Issued_To_District},{d.Quantity},{d.Vaccine_Id},{d.Batch_Number},{d.Voucher_Number},{d.Added_By},{d.Stock_At_Hand},{d.Total_Stock_In},{d.Total_Stock_Out},{d.Total_Stock_Balance}') -> from("(SELECT id,Date_Issued,Issued_To_National,Issued_To_Region,Issued_To_District,Quantity,Vaccine_Id,Batch_Number,Voucher_Number,Added_By,Stock_At_Hand, (case when Issued_By_Region='$region' then (@stock_out := @stock_out + Quantity) end) as total_stock_out, (case when Issued_To_Region='$region' then (@stock_in := @stock_in + Quantity) end) as total_stock_in, (@stock_balance := @stock_in - @stock_out) as total_stock_balance FROM Disbursements d where (Issued_By_Region = '$region' or Issued_To_Region = '$region')  and Vaccine_Id = '$vaccine' and Date_Issued_Timestamp between '$from' and '$to' and Owner = '$owner' order by $order_by $order) d") -> offset($offset) -> limit($items);
+				$query -> addComponent('d', 'Disbursements') -> select('{d.Date_Issued},{d.Issued_To_National},{d.Issued_To_Region},{d.Issued_To_District},{d.Quantity},{d.Vaccine_Id},{d.Batch_Number},{d.Voucher_Number},{d.Added_By},{d.Stock_At_Hand},{d.Total_Stock_In},{d.Total_Stock_Out},{d.Total_Stock_Balance}') -> from("(SELECT id,Date_Issued,Issued_To_National,Issued_To_Region,Issued_To_District,Quantity,Vaccine_Id,Batch_Number,Voucher_Number,Added_By,Stock_At_Hand, (case when Issued_By_Region='$region' then (@stock_out := @stock_out + Quantity) else case when total_stock_balance > 0 then @stock_out :=0 end  end) as total_stock_out, (case when Issued_To_Region='$region' then (@stock_in := @stock_in + Quantity) else case when total_stock_balance > 0 then @stock_in :=total_stock_balance end end) as total_stock_in, (case when total_stock_balance > 0 then @stock_balance :=total_stock_balance else @stock_balance := @stock_in - @stock_out end) as total_stock_balance FROM Disbursements d where Vaccine_Id = '$vaccine' and Date_Issued_Timestamp between '$from' and '$to' and Owner = '$owner' order by Unix_Timestamp(str_to_date(Date_Issued,'%m/%d/%Y')) asc) d") ->orderBy("Unix_Timestamp(str_to_date(Date_Issued,'%m/%d/%Y')) asc")-> offset($offset) -> limit($items);
+				//echo $query->getSQL();
 			}
 		}
 		$disbursements = $query -> execute();
@@ -303,13 +305,16 @@ class Disbursements extends Doctrine_Record {
 
 	public static function getRegionalPeriodBalance($region, $vaccine, $from) {
 		$owner = "R" . $region;
-		$last_date = '';
+		$last_balance_query = Doctrine_Query::create() -> select("Total_Stock_Balance,Date_Issued") -> from("Disbursements") -> where("Owner = '$owner' and Vaccine_Id = '$vaccine' and Date_Issued_Timestamp < '$from' and total_stock_balance>0")->orderBy("Date_Issued_Timestamp desc")->limit("1");
+		$last_balance_result = $last_balance_query -> execute();
+		$last_date = strtotime($last_balance_result[0] -> Date_Issued);
+		$last_balance = $last_balance_result[0] -> Total_Stock_Balance;
 		$query = Doctrine_Query::create() -> select("SUM(Quantity) as Totals") -> from("Disbursements") -> where("Issued_By_Region = '$region' and Vaccine_Id = '$vaccine' and Date_Issued_Timestamp between '$last_date' and '$from' and Owner = '$owner'");
 		$issued = $query -> execute(array(), Doctrine::HYDRATE_ARRAY);
 		$query2 = Doctrine_Query::create() -> select("SUM(Quantity) as Totals") -> from("Disbursements") -> where("Issued_To_Region = '$region' and Vaccine_Id = '$vaccine' and Date_Issued_Timestamp between '$last_date' and '$from' and Owner = '$owner'");
 		$received = $query2 -> execute(array(), Doctrine::HYDRATE_ARRAY);
 		$balance = $received[0]['Totals'] - $issued[0]['Totals'];
-		//$balance += $last_balance;
+		$balance += $last_balance;
 		return $balance;
 
 	}
@@ -354,7 +359,7 @@ class Disbursements extends Doctrine_Record {
 
 	//This function lists a summary of all recipients of vaccines from this store (Regional Store)
 	public static function getRegionalRecipientTally($region, $vaccine, $from, $to, $offset, $items, $order_by, $order) {
-		$owner = "R".$region;
+		$owner = "R" . $region;
 		$query = Doctrine_Query::create() -> select("Date_Issued,Issued_To_Region,Issued_To_District,sum(Quantity) as Quantity,Vaccine_Id") -> from("Disbursements") -> where("Issued_By_Regional = '$region' and Vaccine_Id = '$vaccine' and Date_Issued_Timestamp between '$from' and '$to' and Owner = '$owner'") -> GroupBy("Issued_To_Region, Issued_To_District") -> offset($offset) -> limit($items) -> orderBy("$order_by $order");
 		$result = $query -> execute();
 		return $result;

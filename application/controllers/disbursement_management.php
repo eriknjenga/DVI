@@ -76,6 +76,19 @@ class Disbursement_Management extends MY_Controller {
 		$this -> base_params($data);
 	}
 
+	public function stock_count($id = null) {
+		if ($id != null) {
+			$disbursement = Disbursements::getDisbursement($id);
+			$data['disbursement'] = $disbursement[0];
+			$data['edit'] = true;
+			$data['id'] = $id;
+		}
+		$data['title'] = "Disbursement Management::Stock Count";
+		$data['content_view'] = "add_stock_count";
+		$data['quick_link'] = "stock_count";
+		$this -> base_params($data);
+	}
+
 	public function view_receipts() {
 		$data['title'] = "Disbursement Management::All Receipts From National Store";
 		$data['content_view'] = "view_receipts_view";
@@ -223,11 +236,12 @@ class Disbursement_Management extends MY_Controller {
 					$this -> pagination -> initialize($config);
 					$data['pagination'][$vaccine -> id] = $this -> pagination -> create_links();
 				}
-				if ($order == "ASC") {
+				/*if ($order == "ASC") {
 					$balances[$vaccine -> id] = Disbursements::getRegionalPeriodBalance($district_or_province, $vaccine -> id, $from);
 				} else if ($order == "DESC") {
 					$balances[$vaccine -> id] = Disbursements::getRegionalPeriodBalance($district_or_province, $vaccine -> id, $to);
-				}
+				}*/
+				$balances[$vaccine -> id] = Disbursements::getRegionalPeriodBalance($district_or_province, $vaccine -> id, $from);
 				$return_array[$vaccine -> id] = Disbursements::getRegionalDisbursements($district_or_province, $vaccine -> id, $from, $to, $default_offset, $items_per_page, $district, $region, $order_by, $order, $balances[$vaccine -> id]);
 
 			}
@@ -245,11 +259,12 @@ class Disbursement_Management extends MY_Controller {
 					$this -> pagination -> initialize($config);
 					$data['pagination'][$paged_vaccine] = $this -> pagination -> create_links();
 				}
-				if ($order == "ASC") {
+				/*if ($order == "ASC") {
 					$balances[$paged_vaccine] = Disbursements::getRegionalPeriodBalance($district_or_province, $paged_vaccine, $from);
 				} else if ($order == "DESC") {
 					$balances[$paged_vaccine] = Disbursements::getRegionalPeriodBalance($district_or_province, $paged_vaccine, $to);
-				}
+				}*/
+				$balances[$paged_vaccine] = Disbursements::getRegionalPeriodBalance($district_or_province, $paged_vaccine, $from);
 				$return_array[$paged_vaccine] = Disbursements::getRegionalDisbursements($district_or_province, $paged_vaccine, $from, $to, $offset, $items_per_page, $district, $region, $order_by, $order, $balances[$paged_vaccine]);
 
 			}
@@ -394,6 +409,33 @@ class Disbursement_Management extends MY_Controller {
 			$disbursement -> Issued_By_Region = $id;
 		} else if ($type == "national") {
 			$disbursement -> Issued_By_National = "0";
+		}
+		$disbursement -> save();
+		redirect("disbursement_management");
+	}
+
+	public function save_stock_count($edit = null) {
+		if ($edit != null) {
+			$disbursements = Disbursements::getDisbursementObject($edit);
+			$disbursement = $disbursements[0];
+		} else {
+			$disbursement = new Disbursements();
+		}
+		$disbursement -> Date_Issued = $this -> input -> post('date_received');
+		$disbursement -> Total_Stock_Balance = $this -> input -> post('doses');
+		$disbursement -> Batch_Number = $this -> input -> post('batch_number');
+		$disbursement -> Vaccine_Id = $this -> input -> post('vaccine_id');
+		$disbursement -> Timestamp = date('U');
+		$disbursement -> Added_By = $this -> session -> userdata('user_id');
+		$disbursement -> Date_Issued_Timestamp = strtotime($this -> input -> post('date_received'));
+		$identifier = $this -> session -> userdata('user_identifier');
+		if ($identifier == "national_officer") {
+			$disbursement -> Owner = "N0";
+		}
+		else if ($identifier == "provincial_officer") {
+			$disbursement -> Owner = "R" . $this -> session -> userdata('district_province_id');
+		} else if ($identifier == "district_officer") {
+			$disbursement -> Owner = "D" . $this -> session -> userdata('district_province_id');
 		}
 		$disbursement -> save();
 		redirect("disbursement_management");

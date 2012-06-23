@@ -164,6 +164,11 @@ if($identifier != "general_user")
 if ($quick_link == "new_disbursement") {echo "quick_menu_active";
 }
 ?>" href="<?php echo site_url("disbursement_management/new_disbursement");?>">Issue Vaccines</a>
+<a  class="quick_menu_link <?php
+if ($quick_link == "stock_count") {echo "quick_menu_active";
+}
+?>" href="<?php echo site_url("disbursement_management/stock_count");?>">Stock Count</a>
+
   <?php
   if($admin_national_only){?>
 <a class="quick_menu_link <?php
