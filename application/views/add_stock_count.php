@@ -13,14 +13,12 @@ if (isset($disbursement)) {
 	$Vaccine_Id = $disbursement['Vaccine_Id'];
 	$Date_Done = $disbursement['Date_Issued'];
 	$Quantity = $disbursement['Total_Stock_Balance'];
-	$Batch_Number = $disbursement['Batch_Number'];
 	
 
 } else {
 	$Vaccine_Id = "";
 	$Date_Done = Date('m/d/Y');
 	$Quantity = "";
-	$Batch_Number = "";
 }
 ?>
 
@@ -77,14 +75,6 @@ if (isset($disbursement)) {
 
 				$data_doses = array('name' => 'doses', 'id' => 'doses','value' =>$Quantity,'class'=>'validate[required,custom[integer]]');
 				echo form_input($data_doses);
-				?></td>
-			</tr>
-			<tr>
-				<td> Batch Number of Doses (create unique entry for each batch)</td>
-				<td><?php
-
-				$data_batch_number = array('name' => 'batch_number','value' =>$Batch_Number);
-				echo form_input($data_batch_number);
 				?></td>
 			</tr>
 			<tr>

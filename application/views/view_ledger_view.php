@@ -84,7 +84,7 @@ autocomplete_elements[0] = {value: "All Stores", id: "national_0"}
 	$(".export_link").click(function(){
 		var vaccine_name = $(this).attr("vaccine_name");
 		var vaccine_id = $(this).attr("vaccine");
-		var confirmation_text = "This action will export 200 records in the time period specified for "+vaccine_name +" vaccine.\nAre you sure you want to continue?";
+		var confirmation_text = "This action will export all ledger entries in the time period specified for "+vaccine_name +" vaccine.\nAre you sure you want to continue?";
 		var confirm_export = confirm(confirmation_text);
 		
 		

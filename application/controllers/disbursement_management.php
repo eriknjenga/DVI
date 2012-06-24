@@ -189,12 +189,7 @@ class Disbursement_Management extends MY_Controller {
 					$this -> pagination -> initialize($config);
 					$data['pagination'][$vaccine -> id] = $this -> pagination -> create_links();
 				}
-				if ($order == "ASC") {
-					$balances[$vaccine -> id] = Disbursements::getNationalPeriodBalance($vaccine -> id, $from);
-				} else if ($order == "DESC") {
-					$balances[$vaccine -> id] = Disbursements::getNationalPeriodBalance($vaccine -> id, $to);
-				}
-
+				$balances[$vaccine -> id] = Disbursements::getNationalPeriodBalance($vaccine -> id, $from);
 				$return_array[$vaccine -> id] = Disbursements::getNationalDisbursements($vaccine -> id, $from, $to, $default_offset, $items_per_page, $district, $region, $order_by, $order, $balances[$vaccine -> id]);
 
 			}
@@ -212,11 +207,7 @@ class Disbursement_Management extends MY_Controller {
 					$this -> pagination -> initialize($config);
 					$data['pagination'][$paged_vaccine] = $this -> pagination -> create_links();
 				}
-				if ($order == "ASC") {
-					$balances[$paged_vaccine] = Disbursements::getNationalPeriodBalance($paged_vaccine, $from);
-				} else if ($order == "DESC") {
-					$balances[$paged_vaccine] = Disbursements::getNationalPeriodBalance($paged_vaccine, $to);
-				}
+				$balances[$paged_vaccine] = Disbursements::getNationalPeriodBalance($paged_vaccine, $from);
 				$return_array[$paged_vaccine] = Disbursements::getNationalDisbursements($paged_vaccine, $from, $to, $offset, $items_per_page, $district, $region, $order_by, $order, $balances[$paged_vaccine]);
 
 			}
@@ -236,11 +227,6 @@ class Disbursement_Management extends MY_Controller {
 					$this -> pagination -> initialize($config);
 					$data['pagination'][$vaccine -> id] = $this -> pagination -> create_links();
 				}
-				/*if ($order == "ASC") {
-					$balances[$vaccine -> id] = Disbursements::getRegionalPeriodBalance($district_or_province, $vaccine -> id, $from);
-				} else if ($order == "DESC") {
-					$balances[$vaccine -> id] = Disbursements::getRegionalPeriodBalance($district_or_province, $vaccine -> id, $to);
-				}*/
 				$balances[$vaccine -> id] = Disbursements::getRegionalPeriodBalance($district_or_province, $vaccine -> id, $from);
 				$return_array[$vaccine -> id] = Disbursements::getRegionalDisbursements($district_or_province, $vaccine -> id, $from, $to, $default_offset, $items_per_page, $district, $region, $order_by, $order, $balances[$vaccine -> id]);
 
@@ -259,11 +245,6 @@ class Disbursement_Management extends MY_Controller {
 					$this -> pagination -> initialize($config);
 					$data['pagination'][$paged_vaccine] = $this -> pagination -> create_links();
 				}
-				/*if ($order == "ASC") {
-					$balances[$paged_vaccine] = Disbursements::getRegionalPeriodBalance($district_or_province, $paged_vaccine, $from);
-				} else if ($order == "DESC") {
-					$balances[$paged_vaccine] = Disbursements::getRegionalPeriodBalance($district_or_province, $paged_vaccine, $to);
-				}*/
 				$balances[$paged_vaccine] = Disbursements::getRegionalPeriodBalance($district_or_province, $paged_vaccine, $from);
 				$return_array[$paged_vaccine] = Disbursements::getRegionalDisbursements($district_or_province, $paged_vaccine, $from, $to, $offset, $items_per_page, $district, $region, $order_by, $order, $balances[$paged_vaccine]);
 
@@ -284,11 +265,7 @@ class Disbursement_Management extends MY_Controller {
 					$this -> pagination -> initialize($config);
 					$data['pagination'][$vaccine -> id] = $this -> pagination -> create_links();
 				}
-				if ($order == "ASC") {
-					$balances[$vaccine -> id] = Disbursements::getDistrictPeriodBalance($district_or_province, $vaccine -> id, $from);
-				} else if ($order == "DESC") {
-					$balances[$vaccine -> id] = Disbursements::getDistrictPeriodBalance($district_or_province, $vaccine -> id, $to);
-				}
+				$balances[$vaccine -> id] = Disbursements::getDistrictPeriodBalance($district_or_province, $vaccine -> id, $from);
 				$return_array[$vaccine -> id] = Disbursements::getDistrictDisbursements($district_or_province, $vaccine -> id, $from, $to, $default_offset, $items_per_page, $district, $order_by, $order, $balances[$vaccine -> id]);
 
 			}
@@ -306,11 +283,7 @@ class Disbursement_Management extends MY_Controller {
 					$this -> pagination -> initialize($config);
 					$data['pagination'][$paged_vaccine] = $this -> pagination -> create_links();
 				}
-				if ($order == "ASC") {
-					$balances[$paged_vaccine] = Disbursements::getDistrictPeriodBalance($district_or_province, $paged_vaccine, $from);
-				} else if ($order == "DESC") {
-					$balances[$paged_vaccine] = Disbursements::getDistrictPeriodBalance($district_or_province, $paged_vaccine, $to);
-				}
+				$balances[$paged_vaccine] = Disbursements::getDistrictPeriodBalance($district_or_province, $paged_vaccine, $from);
 				$return_array[$paged_vaccine] = Disbursements::getDistrictDisbursements($district_or_province, $paged_vaccine, $from, $to, $offset, $items_per_page, $district, $order_by, $order, $balances[$paged_vaccine]);
 
 			}
@@ -423,7 +396,6 @@ class Disbursement_Management extends MY_Controller {
 		}
 		$disbursement -> Date_Issued = $this -> input -> post('date_received');
 		$disbursement -> Total_Stock_Balance = $this -> input -> post('doses');
-		$disbursement -> Batch_Number = $this -> input -> post('batch_number');
 		$disbursement -> Vaccine_Id = $this -> input -> post('vaccine_id');
 		$disbursement -> Timestamp = date('U');
 		$disbursement -> Added_By = $this -> session -> userdata('user_id');
@@ -431,8 +403,7 @@ class Disbursement_Management extends MY_Controller {
 		$identifier = $this -> session -> userdata('user_identifier');
 		if ($identifier == "national_officer") {
 			$disbursement -> Owner = "N0";
-		}
-		else if ($identifier == "provincial_officer") {
+		} else if ($identifier == "provincial_officer") {
 			$disbursement -> Owner = "R" . $this -> session -> userdata('district_province_id');
 		} else if ($identifier == "district_officer") {
 			$disbursement -> Owner = "D" . $this -> session -> userdata('district_province_id');
@@ -556,21 +527,11 @@ class Disbursement_Management extends MY_Controller {
 
 		$data = null;
 		if ($level == "national_officer") {//National Level
-
-			if ($order == "ASC") {
-				$balance = Disbursements::getNationalPeriodBalance($vaccine, $from);
-			} else if ($order == "DESC") {
-				$balance = Disbursements::getNationalPeriodBalance($vaccine, $to);
-			}
+			$balance = Disbursements::getNationalPeriodBalance($vaccine, $from);
 			$disbursements = Disbursements::getNationalDisbursements($vaccine, $from, $to, $offset, $items_per_page, $district, $region, $order_by, $order, $balance);
 		} else if ($level == "provincial_officer") {//Regional Level
-			if ($order == "ASC") {
-				$balance = Disbursements::getRegionalPeriodBalance($origin_region, $vaccine, $from);
-			} else if ($order == "DESC") {
-				$balance = Disbursements::getRegionalPeriodBalance($origin_region, $vaccine, $to);
-			}
+			$balance = Disbursements::getRegionalPeriodBalance($origin_region, $vaccine, $from);
 			$disbursements = Disbursements::getRegionalDisbursements($origin_region, $vaccine, $from, $to, $offset, $items_per_page, $district, $region, $order_by, $order, $balance);
-
 		}
 
 		$reducing_balance = $balance;
@@ -594,7 +555,7 @@ class Disbursement_Management extends MY_Controller {
 				$data .= " \t" . $disbursement -> Quantity . "\t";
 			}
 
-			//If the vaccines were issued the Central store, Display UNICEF as the source
+			//If the vaccines were issued to the Central store, Display UNICEF as the source
 			if ($disbursement -> Issued_To_National == "0") {
 				$data .= "UNICEF\t";
 				$data .= $disbursement -> Quantity . "\t\t";
@@ -604,6 +565,11 @@ class Disbursement_Management extends MY_Controller {
 			if ($disbursement -> Issued_By_National == "0" && $level != "national_officer") {
 				$data .= "Central Vaccine Stores\t";
 				$data .= $disbursement -> Quantity . "\t\t";
+			}
+			//If no source is specified, display the physical stock count
+			if($disbursement->Issued_To_Region=='' && $disbursement->Issued_To_National=='' && $disbursement->Issued_To_District==''){
+				$data .= "Physical Stock Count\t";
+				$data .= "\t\t";
 			}
 			$data .= $disbursement -> Total_Stock_Balance . "\t";
 			$data .= $disbursement -> Voucher_Number . "\t";
