@@ -58,6 +58,47 @@ class Disbursement_Management extends MY_Controller {
 		$this -> base_params($data);
 	}
 
+	public function new_batch_disbursement() {
+		$districts = new Districts();
+		$regions = new Regions();
+		$facilities = new Facilities();
+		$additional_facilities = new Additional_Facilities();
+		$data['vaccines'] = Vaccines::getAll_Minified();
+		$archive_date = date('U');
+		$data['stock_balance'] = array();
+		$district_or_region = $this -> session -> userdata('district_province_id');
+
+		//Retrieve the user identifier from the session
+		$identifier = $this -> session -> userdata('user_identifier');
+		//Check if it's a provincial officer
+		if ($identifier == 'provincial_officer') {
+			foreach ($data['vaccines'] as $vaccine) {
+				$data['stock_balance'][$vaccine -> id] = Disbursements::getRegionalPeriodBalance($district_or_region, $vaccine -> id, $archive_date);
+			}
+			$data['districts'] = $districts -> getAllDistricts();
+			$data['regions'] = $regions -> getAllRegions();
+		} else if ($identifier == 'district_officer') {
+			foreach ($data['vaccines'] as $vaccine) {
+				$data['stock_balance'][$vaccine -> id] = Disbursements::getDistrictPeriodBalance($district_or_region, $vaccine -> id, $archive_date);
+			}
+			$district_province = $districts -> getDistrictProvince($district_or_region);
+			$data['districts'] = $districts -> getProvinceDistricts($district_province['province']);
+			$data['facilities'] = $facilities -> getDistrictFacilities($district_or_region);
+			$data['additional_facilities'] = $additional_facilities -> getExtraFacilities($district_or_region);
+		} else if ($identifier == 'national_officer') {
+			foreach ($data['vaccines'] as $vaccine) {
+				$data['stock_balance'][$vaccine -> id] = Disbursements::getNationalPeriodBalance($vaccine -> id, $archive_date);
+			}
+			$data['districts'] = $districts -> getAllDistricts();
+			$data['regions'] = $regions -> getAllRegions();
+		}
+
+		$data['title'] = "Disbursement Management::Disburse Vaccines";
+		$data['content_view'] = "add_batch_disbursement_view";
+		$data['quick_link'] = "new_batch_disbursement";
+		$this -> base_params($data);
+	}
+
 	public function add_receipt($id = null) {
 		if ($id != null) {
 			$disbursement = Disbursements::getDisbursement($id);
@@ -567,7 +608,7 @@ class Disbursement_Management extends MY_Controller {
 				$data .= $disbursement -> Quantity . "\t\t";
 			}
 			//If no source is specified, display the physical stock count
-			if($disbursement->Issued_To_Region=='' && $disbursement->Issued_To_National=='' && $disbursement->Issued_To_District==''){
+			if ($disbursement -> Issued_To_Region == '' && $disbursement -> Issued_To_National == '' && $disbursement -> Issued_To_District == '') {
 				$data .= "Physical Stock Count\t";
 				$data .= "\t\t";
 			}
