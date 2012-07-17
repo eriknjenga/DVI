@@ -163,7 +163,7 @@ if($identifier != "general_user")
 <a  class="quick_menu_link <?php
 if ($quick_link == "new_disbursement") {echo "quick_menu_active";
 }
-?>" href="<?php echo site_url("disbursement_management/new_disbursement");?>">Issue Vaccines</a>
+?>" href="<?php echo site_url("disbursement_management/new_batch_disbursement");?>">Issue Vaccines</a>
 
 <a  class="quick_menu_link <?php
 if ($quick_link == "stock_count") {echo "quick_menu_active";
@@ -175,7 +175,7 @@ if ($quick_link == "stock_count") {echo "quick_menu_active";
 <a class="quick_menu_link <?php
 if ($quick_link == "new_batch") {echo "quick_menu_active";
 }
-?>" href="<?php echo site_url("batch_management/new_batch");?>">Add New Stock</a> 
+?>" href="<?php echo site_url("batch_management/new_batch");?>">Stock Delivery</a> 
  <?php }?>
  
 
@@ -196,7 +196,7 @@ if ($quick_link == "new_extra_facility") {echo "quick_menu_active";
 <a href="<?php echo site_url("disbursement_management/add_receipt");?>" class="quick_menu_link <?php
 if ($quick_link == "new_receipt") {echo "quick_menu_active";
 }
-?>">Add Receivables</a>
+?>">Stock Delivery</a>
 
  <?php }?>
  

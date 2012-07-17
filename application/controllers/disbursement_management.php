@@ -95,7 +95,7 @@ class Disbursement_Management extends MY_Controller {
 
 		$data['title'] = "Disbursement Management::Disburse Vaccines";
 		$data['content_view'] = "add_batch_disbursement_view";
-		$data['quick_link'] = "new_batch_disbursement";
+		$data['quick_link'] = "new_disbursement";
 		$this -> base_params($data);
 	}
 
@@ -110,8 +110,8 @@ class Disbursement_Management extends MY_Controller {
 		$districts = new Districts();
 		$regions = new Regions();
 		$data['districts'] = $districts -> getAllDistricts();
-		$data['regions'] = $regions -> getAllRegions();
-		$data['title'] = "Disbursement Management::Disburse Vaccines";
+		$data['regions'] = $regions -> getAllRegions(); 
+		$data['title'] = "Disbursement Management::Add Stock Deliveries";
 		$data['content_view'] = "add_receipt_view";
 		$data['quick_link'] = "new_receipt";
 		$this -> base_params($data);

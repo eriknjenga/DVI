@@ -1,9 +1,4 @@
-
 <div class="section_title"><?php echo $title;?></div>
-<?php
-$this->load->view('vaccine_tabs');
-?>
-
 <script type="text/javascript">
 $(document).ready(function() {
 	//Add the row cloning code
@@ -106,11 +101,7 @@ $(document).ready(function() {
 	<?php }
 	?>
 	$(".vaccine_name")[0].click();
-	});
-function cleanup(){
-	$("#reset_vaccine_form").click();
-	$("#viles").html(""); 
-}
+	}); 
 </script>
 
 <div id="form_area"><?php
@@ -125,10 +116,7 @@ echo validation_errors('
 
 
 	<thead>
-	<tr>
-		<th class="subsection-title" colspan="7">Disbursement Information for
-		<span id="vaccine_name_label" style="color: #E01B4C;"></span></th>
-	</tr>
+			<th><span class="mandatory">*</span>Vaccine</th>
 			<th><span class="mandatory">*</span>Date Issued</th>
 			<th><span class="mandatory">*</span>Issued To</th>
 			<th><span class="mandatory">*</span>Doses Issued</th>
@@ -142,6 +130,14 @@ echo validation_errors('
 		<input type="hidden" id="current_tab" />
 		<input type="hidden" id="issued_to_id" name="issued_to_id" />
 		<input type="hidden" id="vaccine_id" name="vaccine_id" />
+			<td>
+					<select name="vaccine_id">
+						<option>--select--</option>
+						<?php foreach($vaccines as $vaccine){?>
+							<option value="<?php echo $vaccine->id?>"><?php echo $vaccine->Name;?></option>
+						<?php }?>
+					</select>
+				</td>
 			<td><?php
 
 			$data_date_issued= array(
@@ -184,7 +180,7 @@ echo validation_errors('
 		</tr>
 
 		<tr>
-			<td align="center" colspan=7><input name="submit" type="submit"
+			<td align="center" colspan=8><input name="submit" type="submit"
 				class="button" value="Save Disbursement Information"> <input
 				name="reset" type="reset" class="button" value="Reset Fields"
 				id="reset_vaccine_form"></td>
@@ -208,20 +204,3 @@ echo validation_errors('
 	float: left;
 }
 </style>
-
-
-<div id="vaccine_information">
-<table border="0" class="data-table">
-
-	<tr>
-		<th class="subsection-title" colspan="2">Vaccine Information (Not
-		Editable)</th>
-	</tr>
-	<tr><td>Stock Left: </td>
-		<td class="subsection-title" ><span id="vaccine_stock" value="" style="color: #E01B4C; font-weight:bold; font-size:16px;"></span></td>
-	</tr>
-	<tr id="viles"></tr>
-</table>
-
-
-</div>

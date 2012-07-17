@@ -27,7 +27,7 @@ class Vaccines extends Doctrine_Record {
 	}
 
 	public static function getAll() {
-		$query = Doctrine_Query::create() -> select("Name,Doses_Required,Wastage_Factor,Added_By,Timestamp,Tray_Color") -> from("vaccines");
+		$query = Doctrine_Query::create() -> select("Name,Doses_Required,Wastage_Factor,Added_By,Timestamp,Tray_Color") -> from("vaccines")->orderBy("Name asc");
 		$vaccines = $query -> execute();
 		return $vaccines;
 	}
@@ -39,7 +39,7 @@ class Vaccines extends Doctrine_Record {
 	}
 
 	public static function getAll_Minified() {
-		$query = Doctrine_Query::create() -> select("id,Name,Doses_Required,Wastage_Factor") -> from("vaccines") -> where("Active = '1'");
+		$query = Doctrine_Query::create() -> select("id,Name,Doses_Required,Wastage_Factor") -> from("vaccines") -> where("Active = '1'")->orderBy("Name asc");
 		$vaccines = $query -> execute();
 		return $vaccines;
 	}

@@ -8,7 +8,7 @@
 	</div>
 </div>
 <?php
-$this -> load -> view('vaccine_tabs');
+//$this -> load -> view('vaccine_tabs');
 if (isset($disbursement)) { 
 	$Vaccine_Id = $disbursement['Vaccine_Id'];
 	$Date_Received = $disbursement['Date_Issued'];
@@ -77,11 +77,14 @@ if (isset($disbursement)) {
 		$( "#date_received" ).datepicker(default_datepicker_options);
 		$( "#date_received" ).datepicker('setDate', new Date());
 
-		});
-		function cleanup(){
-		$("#reset_vaccine_form").click();
-		$( "#date_received" ).datepicker('setDate', new Date());
-		}
+//Add listener for the 'bad condition' radio button
+$("#bad_condition").click(function() {
+	$("#bad_condition_comments").css("display","table-row");
+});
+$("#good_condition").click(function() {
+	$("#bad_condition_comments").css("display","none");
+});
+		}); 
 </script>
 <div id="form_area">
 	<?php
@@ -98,16 +101,24 @@ if (isset($disbursement)) {
 ');
 	?>
 
-	<table border="0" class="data-table">
-		<tr>
-			<th class="subsection-title" colspan="2">Receipt Information for <span id="vaccine_name_label" style="color: #E01B4C;"></span></th>
-		</tr>
+	<table border="0" class="data-table" style="margin:0 auto;">
 		<tbody>
 			<input type="hidden" id="current_tab" />
 			<input type="hidden" id="received_from_id" name="received_from_id" />
 			<input type="hidden" id="vaccine_id" name="vaccine_id" />
 			<tr>
 				<td colspan="4"><em>Enter required details below:-</em></td>
+			</tr>
+			<tr>
+				<td><span class="mandatory">*</span> Vaccine</td>
+				<td>
+					<select name="vaccine_id">
+						<option>--select--</option>
+						<?php foreach($vaccines as $vaccine){?>
+							<option value="<?php echo $vaccine->id?>"><?php echo $vaccine->Name;?></option>
+						<?php }?>
+					</select>
+				</td>
 			</tr>
 			<tr>
 				<td><span class="mandatory">*</span> Received From (Type First Few
@@ -151,9 +162,19 @@ if (isset($disbursement)) {
 				?></td>
 			</tr>
 			<tr>
+				<td>Received Status</td>
+				<td><input type="radio" name="status" value="1" checked="" id="good_condition"/>Good Condition<input type="radio" name="status" value="0" id="bad_condition"/>Bad Condition</td>
+			</tr>
+			<tr id="bad_condition_comments" style="display: none;">
+				<td>Comments</td>
+				<td><textarea name="comments"></textarea></td>
+			</tr>
+			<tr>
 				<td align="center" colspan=2>
 				<input name="submit" type="submit"
-				class="button" value="Save Receipt Information">
+				class="button" value="Save Delivery">
+				<input name="submit" type="submit"
+				class="button" value="Save & Add Delivery">
 				<input name="reset"
 				type="reset" class="button" value="Reset Fields" id="reset_vaccine_form">
 				</td>
