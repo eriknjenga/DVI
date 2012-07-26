@@ -83,7 +83,7 @@ background: url("<?php echo base_url().'Images/Notification_Resized.png'?>") no-
 
 <body>
 <div id="wrapper">
-<div style="margin:0 auto 0 auto;" id="logo"><a href="<?php echo base_url();?>" ></a></div> 
+<div style="margin:0 auto 0 auto; height:110px;" ></div> 
 <div id="top-panel">
 <div>
 <a href="<?php echo base_url();?>" id="logo2"></a>

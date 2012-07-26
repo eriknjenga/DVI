@@ -17,10 +17,8 @@ overflow:hidden;
 <div class="section_title"><?php echo $title;?></div>
 
 <div id="dashboard_menu">
-<a href="<?php echo site_url("Report_Management/view_report/store_summaries");?>" class="quick_menu_link <?php if($quick_link == "store_summaries"){echo "quick_menu_active";}?>">Store Summaries</a> 
-<a href="<?php echo site_url("Report_Management/view_report/store_tallies");?>" class="quick_menu_link <?php if($quick_link == "store_tallies"){echo "quick_menu_active";}?>">Store Tallies</a>
-<a href="<?php echo site_url("Report_Management/view_report/vaccine_movement");?>" class="quick_menu_link <?php if($quick_link == "vaccine_movement"){echo "quick_menu_active";}?>">Stock Movement</a> 
-<a href="<?php echo site_url("Report_Management/manage_recipients");?>" class="quick_menu_link <?php if($quick_link == "manage_recipients"){echo "quick_menu_active";}?>">Email Recepients</a> 
+<a href="<?php echo site_url("Report_Management/view_report/consumption");?>" class="quick_menu_link <?php if($quick_link == "consumption"){echo "quick_menu_active";}?>">Consumption</a> 
+<a href="<?php echo site_url("Report_Management/view_report/issues");?>" class="quick_menu_link <?php if($quick_link == "issues"){echo "quick_menu_active";}?>">Stock Issues</a>
 </div>
 <?php 
 $this->load->view($report);

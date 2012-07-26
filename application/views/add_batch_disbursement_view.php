@@ -3,9 +3,32 @@
 $(document).ready(function() {
 	//Add the row cloning code
 	$(".add").click(function() { 
+		$(this).closest("tr").find(".issued_to").autocomplete("destroy");
 			var cloned_object = $(this).closest("tr").clone(true);
+			
 			cloned_object.insertAfter($(this).closest("tr"));
-			return false;
+			refreshDatePickers();
+			
+			//cloned_object.find(".issued_to").removeClass("ui-autocomplete-input");  
+			cloned_object.find(".issued_to").attr("value",""); 
+			cloned_object.find(".issued_to").focus(); 
+			var counter = 0;
+		$('.issued_to').each(function() { 
+			var new_id = "issued_to_" + counter;
+			$(this).attr("id", new_id);
+			$(this).autocomplete("destroy");
+			/*$(this).autocomplete({
+	         	source: autocomplete_elements,
+	         	create: function(event, ui) { console.log("Hahah"); },
+	         	select: function(event, ui) {
+     			 var selected_id = ui.item.id; 
+     			 $(this).closest(".issued_to_id").attr("value",selected_id); 
+     			 }
+	         }); */
+			counter++;
+		});
+		cloned_object.find(".issued_to").focus();  
+			 
 		});
 	$(".remove").click(function() {
 			var current_row = $(this).closest("tr");
@@ -57,62 +80,63 @@ $(document).ready(function() {
 	?>  
 	//Finish creating Autocomplete array
 	//Create the jqueryui autocomplete object
-	$( "#issued_to" ).autocomplete({
+	refreshDatePickers(); 
+	//refreshAutoComplete(autocomplete_elements);
+	$(".issued_to:not(.ui-autocomplete-input)").live("focus", function (event) {
+   		 $(this).autocomplete({
 	         	source: autocomplete_elements,
 	         	select: function(event, ui) {
-     			 var selected_id = ui.item.id; 
-     			$( "#issued_to_id" ).attr("value",selected_id); 
+     			 var selected_id = ui.item.id;  
+     			 $(this).closest("tr").find(".issued_to_id").attr("value",selected_id); 
      			 }
 	         });
-    //Create all the datepickers
-	var default_datepicker_options = {"changeMonth": true, "changeYear": true};
-	$( "#date_issued" ).datepicker(default_datepicker_options);
-	var vaccine_stocks = Array();
-	
-	<?php 
-	foreach($vaccines as $vaccine){
-		if(!isset($total_received[$vaccine['id']]['Totals'])){
-		$total_received[$vaccine['id']]['Totals'] = 0;
-	}
-	if(!isset($total_issued[$vaccine['id']]['Totals'])){
-		$total_issued[$vaccine['id']]['Totals'] = 0;
-	}
- 
-	?>
-		vaccine_stocks["vaccine_<?php echo $vaccine['id'];?>"] = <?php echo $stock_balance[$vaccine['id']];?>;
-	<?php }
-	?> 
-
-	
-	$(".vaccine_name").click(function (){
-		$("#vaccine_stock").attr("value",vaccine_stocks[$(this).attr("id")]);
-		$("#vaccine_stock").html(vaccine_stocks[$(this).attr("id")]); 
-		$("#current_tab").attr("value",$(this).attr("id"));
+});
 	});
-	$("#doses").keyup(function(){
-		var doses = $("#doses").attr("value");
-		if(!isNaN(doses) && doses.length>0){
-		var stock = $("#vaccine_stock").attr("value");
-		$("#vaccine_stock").html(stock-doses+" remaining");
-		}
+	function refreshDatePickers() {
+		var counter = 0;
+		$('.date').each(function() {
+			var new_id = "date_" + counter;
+			$(this).attr("id", new_id);
+			$(this).datepicker("destroy");
+			$(this).not('.hasDatePicker').datepicker();
+			counter++;
 		});
-	<?php if(isset($Vaccine_Id)){?>
-	$("#vaccine_<?php echo $Vaccine_Id;?>").click();
-	<?php }
-	?>
-	$(".vaccine_name")[0].click();
-	}); 
-</script>
+	}
+	function refreshAutoComplete(autocomplete_elements) { 
+		
+		var counter = 0;
+		$('.issued_to').each(function() {
+			alert();
+			var new_id = "issued_to_" + counter;
+			$(this).attr("id", new_id);
+			$(this).autocomplete("destroy");
+			/*$(this).autocomplete({
+	         	source: autocomplete_elements,
+	         	create: function(event, ui) { console.log("Hahah"); },
+	         	select: function(event, ui) {
+     			 var selected_id = ui.item.id; 
+     			 $(this).closest(".issued_to_id").attr("value",selected_id); 
+     			 }
+	         }); */
+			counter++;
+		});
 
-<div id="form_area"><?php
+	}  
+</script>
+<style>
+	input[type="text"]{
+		width:90px;
+	}
+</style>
+<div id="form_area" style="width: 100%;"><?php
 $attributes = array('enctype' => 'multipart/form-data','id'=>'add_disbursement_form');
-echo form_open('disbursement_management/save',$attributes);
+echo form_open('disbursement_management/save_batch',$attributes);
 echo validation_errors('
 <p class="error">','</p>
 '); 
 ?>
 
-<table border="0" class="data-table">
+<table border="0" class="data-table" style="margin:0 auto;">
 
 
 	<thead>
@@ -127,12 +151,9 @@ echo validation_errors('
 		</thead>
 	<tbody>
 		<tr>
-		<input type="hidden" id="current_tab" />
-		<input type="hidden" id="issued_to_id" name="issued_to_id" />
-		<input type="hidden" id="vaccine_id" name="vaccine_id" />
+		<input type="hidden" class="issued_to_id" name="issued_to_id[]" /> 
 			<td>
-					<select name="vaccine_id">
-						<option>--select--</option>
+					<select name="vaccine_id[]"> 
 						<?php foreach($vaccines as $vaccine){?>
 							<option value="<?php echo $vaccine->id?>"><?php echo $vaccine->Name;?></option>
 						<?php }?>
@@ -141,39 +162,39 @@ echo validation_errors('
 			<td><?php
 
 			$data_date_issued= array(
-				'name'        => 'date_issued', 'id'=>'date_issued','class'=>'validate[required]'
+				'name'        => 'date_issued[]','class'=>'date validate[required]'
 				);
 				echo form_input($data_date_issued); ?></td>
 			<td><?php
 
 			$data_issued_to= array(
-				 'name'        => 'issued_to', 'id'=>'issued_to' ,'class'=>'validate[required]'
+				 'name'        => 'issued_to[]', 'id'=>'issued_to','class'=>'issued_to validate[required]'
 				 );
 				 echo form_input($data_issued_to); ?></td>
 			<td><?php
 
 			$data_doses = array(
-				 'name'        => 'doses',
+				 'name'        => 'doses[]',
 					'id' => 'doses','class'=>'validate[required,custom[integer]]'
 				 );
 				 echo form_input($data_doses); ?></td>
 			<td><?php
 
 			$data_stock = array(
-				 'name'        => 'stock_at_hand',
+				 'name'        => 'stock_at_hand[]',
 					'id' => 'stock_at_hand'
 				 );
 				 echo form_input($data_stock); ?></td>
 			<td><?php
 
 			$data_batch_number = array(
-				 'name'        => 'batch_number'
+				 'name'        => 'batch_number[]'
 				 );
 				 echo form_input($data_batch_number); ?></td> 
 			<td><?php
 
 			$data_voucher_number = array(
-				 'name'        => 'voucher_number', 'id'=>'voucher_number'
+				 'name'        => 'voucher_number[]', 'id'=>'voucher_number'
 				 );
 				 echo form_input($data_voucher_number); ?></td>
 				 <td><input type="button" class="add button" value="+"> <input type="button" class="remove button" value="-"></td>

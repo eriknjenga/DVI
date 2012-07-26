@@ -10,7 +10,6 @@ class Disbursement_Management extends MY_Controller {
 	}
 
 	public function new_disbursement($id = null) {
-
 		if ($id != null) {
 			$disbursement = Disbursements::getDisbursement($id);
 			$data['disbursement'] = $disbursement[0];
@@ -110,7 +109,7 @@ class Disbursement_Management extends MY_Controller {
 		$districts = new Districts();
 		$regions = new Regions();
 		$data['districts'] = $districts -> getAllDistricts();
-		$data['regions'] = $regions -> getAllRegions(); 
+		$data['regions'] = $regions -> getAllRegions();
 		$data['title'] = "Disbursement Management::Add Stock Deliveries";
 		$data['content_view'] = "add_receipt_view";
 		$data['quick_link'] = "new_receipt";
@@ -337,6 +336,56 @@ class Disbursement_Management extends MY_Controller {
 		$data['districts'] = Districts::getAllDistricts();
 		$data['regions'] = Regions::getAllRegions();
 		$this -> base_params_min($data);
+	}
+
+	public function save_batch() {
+		//var_dump($this -> input -> post());
+		$recipients = $this -> input -> post('issued_to_id');
+		$vaccines = $this -> input -> post('vaccine_id');
+		$dates = $this -> input -> post('date_issued');
+		$doses = $this -> input -> post('doses');
+		$stocks_at_hand = $this -> input -> post('stock_at_hand');
+		$batches = $this -> input -> post('batch_number');
+		$vouchers = $this -> input -> post('voucher_number');
+		$counter = 0;
+		foreach ($recipients as $recipient) {
+			$disbursement = new Disbursements();
+			$disbursement -> Date_Issued = $dates[$counter];
+			$disbursement -> Quantity = $doses[$counter];
+			$disbursement -> Batch_Number = $batches[$counter];
+			$disbursement -> Stock_At_Hand = $stocks_at_hand[$counter];
+			$disbursement -> Voucher_Number = $vouchers[$counter];
+			$disbursement -> Vaccine_Id = $vaccines[$counter];
+			$disbursement -> Timestamp = date('U');
+			$disbursement -> Added_By = $this -> session -> userdata('user_id');
+			$disbursement -> Date_Issued_Timestamp = strtotime($dates[$counter]);
+			//Get the recipient and the issuer
+			$issued_to_id = $recipient;
+			$split_parts = explode("_", $issued_to_id);
+			$type = $split_parts[0];
+			$id = $split_parts[1];
+			if ($type == "district") {
+				$disbursement -> Issued_To_District = $id;
+			} else if ($type == "region") {
+				$disbursement -> Issued_To_Region = $id;
+			} else if ($type == "facility") {
+				$disbursement -> Issued_To_Facility = $id;
+			}
+			$identifier = $this -> session -> userdata('user_identifier');
+			if ($identifier == "national_officer") {
+				$disbursement -> Issued_By_National = "0";
+				$disbursement -> Owner = "N0";
+			} else if ($identifier == "provincial_officer") {
+				$disbursement -> Issued_By_Region = $this -> session -> userdata('district_province_id');
+				$disbursement -> Owner = "R" . $this -> session -> userdata('district_province_id');
+			} else if ($identifier == "district_officer") {
+				$disbursement -> Issued_By_District = $this -> session -> userdata('district_province_id');
+				$disbursement -> Owner = "D" . $this -> session -> userdata('district_province_id');
+			}
+			$disbursement -> save();
+			$counter++;
+		}
+		redirect("disbursement_management");
 	}
 
 	public function save($edit = null) {

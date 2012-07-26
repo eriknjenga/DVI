@@ -86,7 +86,7 @@ $("#good_condition").click(function() {
 });
 		}); 
 </script>
-<div id="form_area">
+<div id="form_area" style="width: 100%">
 	<?php
 	$attributes = array('enctype' => 'multipart/form-data','id'=>'add_receivables_form'); 
 	if(isset($edit)){

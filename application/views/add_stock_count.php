@@ -8,7 +8,6 @@
 	</div>
 </div>
 <?php
-$this -> load -> view('vaccine_tabs');
 if (isset($disbursement)) { 
 	$Vaccine_Id = $disbursement['Vaccine_Id'];
 	$Date_Done = $disbursement['Date_Issued'];
@@ -36,7 +35,7 @@ if (isset($disbursement)) {
 		$( "#date_counted" ).datepicker('setDate', new Date());
 		}
 </script>
-<div id="form_area">
+<div id="form_area" style="width: 100%">
 	<?php
 	$attributes = array('enctype' => 'multipart/form-data','id'=>'add_receivables_form'); 
 	if(isset($edit)){
@@ -52,14 +51,20 @@ if (isset($disbursement)) {
 	?>
 
 	<table border="0" class="data-table">
-		<tr>
-			<th class="subsection-title" colspan="2">Physical Stock Count for <span id="vaccine_name_label" style="color: #E01B4C;"></span></th>
-		</tr>
 		<tbody>
 			<input type="hidden" id="current_tab" /> 
 			<input type="hidden" id="vaccine_id" name="vaccine_id" />
 			<tr>
 				<td colspan="4"><em>Enter required details below:-</em></td>
+			</tr>
+
+					<tr>
+				<td><span class="mandatory">*</span>Vaccine </td>
+				<td>			<select name="vaccine_id"> 
+						<?php foreach($vaccines as $vaccine){?>
+							<option value="<?php echo $vaccine->id?>" <?php if ($vaccine->id == $Vaccine_Id){echo 'selected';}?>><?php echo $vaccine->Name;?></option>
+						<?php }?>
+					</select></td>
 			</tr>
 			<tr>
 				<td><span class="mandatory">*</span> Date Done </td>

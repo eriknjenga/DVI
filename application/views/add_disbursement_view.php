@@ -1,7 +1,6 @@
 
 <div class="section_title"><?php echo $title;?></div>
 <?php
-$this->load->view('vaccine_tabs');
 if(isset($disbursement)){ 
 $Vaccine_Id = $disbursement['Vaccine_Id'];
 $Date_Issued = $disbursement['Date_Issued'];
@@ -87,40 +86,6 @@ $(document).ready(function() {
     //Create all the datepickers
 	var default_datepicker_options = {"changeMonth": true, "changeYear": true, "defaultDate":'<?php echo $Date_Issued?>'};
 	$( "#date_issued" ).datepicker(default_datepicker_options);
-	var vaccine_stocks = Array();
-	
-	<?php 
-	foreach($vaccines as $vaccine){
-		if(!isset($total_received[$vaccine['id']]['Totals'])){
-		$total_received[$vaccine['id']]['Totals'] = 0;
-	}
-	if(!isset($total_issued[$vaccine['id']]['Totals'])){
-		$total_issued[$vaccine['id']]['Totals'] = 0;
-	}
- 
-	?>
-		vaccine_stocks["vaccine_<?php echo $vaccine['id'];?>"] = <?php echo $stock_balance[$vaccine['id']];?>;
-	<?php }
-	?> 
-
-	
-	$(".vaccine_name").click(function (){
-		$("#vaccine_stock").attr("value",vaccine_stocks[$(this).attr("id")]);
-		$("#vaccine_stock").html(vaccine_stocks[$(this).attr("id")]); 
-		$("#current_tab").attr("value",$(this).attr("id"));
-	});
-	$("#doses").keyup(function(){
-		var doses = $("#doses").attr("value");
-		if(!isNaN(doses) && doses.length>0){
-		var stock = $("#vaccine_stock").attr("value");
-		$("#vaccine_stock").html(stock-doses+" remaining");
-		}
-		});
-	<?php if(isset($Vaccine_Id)){?>
-	$("#vaccine_<?php echo $Vaccine_Id;?>").click();
-	<?php }
-	?>
-	$(".vaccine_name")[0].click();
 	});
 function cleanup(){
 	$("#reset_vaccine_form").click();
@@ -154,6 +119,14 @@ echo validation_errors('
 		<input type="hidden" id="vaccine_id" name="vaccine_id" />
 		<tr>
 			<td colspan="4"><em>Enter required details below:-</em></td>
+		</tr>
+		<tr>
+			<td><span class="mandatory">*</span>Vaccine</td>
+			<td><select name="vaccine_id"> 
+						<?php foreach($vaccines as $vaccine){?>
+							<option value="<?php echo $vaccine->id?>" <?php if ($vaccine->id == $Vaccine_Id){echo 'selected';}?>><?php echo $vaccine->Name;?></option>
+						<?php }?>
+					</select></td>
 		</tr>
 		<tr>
 			<td><span class="mandatory">*</span> Date Issued (Change if
@@ -225,35 +198,4 @@ echo validation_errors('
 	</tbody>
 </table>
 				 <?php echo form_close();?></div>
-<style type="text/css">
-#batch_information {
-	float: left;
-	min-width: 100px;
-}
-
-#vaccine_information {
-	float: left;
-	min-width: 100px;
-}
-
-#form_area {
-	float: left;
-}
-</style>
-
-
-<div id="vaccine_information">
-<table border="0" class="data-table">
-
-	<tr>
-		<th class="subsection-title" colspan="2">Vaccine Information (Not
-		Editable)</th>
-	</tr>
-	<tr><td>Stock Left: </td>
-		<td class="subsection-title" ><span id="vaccine_stock" value="" style="color: #E01B4C; font-weight:bold; font-size:16px;"></span></td>
-	</tr>
-	<tr id="viles"></tr>
-</table>
-
-
-</div>
+ 

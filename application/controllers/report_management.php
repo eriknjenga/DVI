@@ -19,10 +19,15 @@ class Report_Management extends MY_Controller {
 		$this -> base_params($data);
 	}
 
-	public function view_report($report = "store_tallies") {
+	public function view_report($report = "consumption") {
 		$data['title'] = "System Reports";
 		$data['content_view'] = "reports_view";
-
+		if ($report == "consumption") {
+			redirect("consumption_management");
+		}
+		if ($report == "issues") {
+			redirect("vaccine_issues_management");
+		}
 		//Code for getting the Store summaries at the various vaccine store around the country
 		if ($report == "store_summaries") {
 			$data['quick_link'] = "store_summaries";
@@ -188,8 +193,8 @@ else if ($report == "store_tallies") {
 		foreach ($names as $name) {
 			if (strlen($name) > 2) {
 				$recipient = new Email_Recipients();
-				$recipient->Name = $names[$counter];
-				$recipient->Email = $emails[$counter];
+				$recipient -> Name = $names[$counter];
+				$recipient -> Email = $emails[$counter];
 				$recipient -> save();
 				$counter++;
 			} else {
