@@ -442,7 +442,15 @@ class Disbursement_Management extends MY_Controller {
 			$disbursements = Disbursements::getDisbursementObject($edit);
 			$disbursement = $disbursements[0];
 		} else {
-			$disbursement = new Disbursements();
+			$status = $this -> input -> post('status');
+			//Check if the vaccines were in bad condition
+			if ($status == 0) {
+				$disbursement = new Bad_Vaccines();
+				$disbursement -> Comment = $this -> input -> post('comments');
+			}
+			else if ($status == 1) {
+				$disbursement = new Disbursements();
+			}
 		}
 		$disbursement -> Date_Issued = $this -> input -> post('date_received');
 		$disbursement -> Quantity = $this -> input -> post('doses');

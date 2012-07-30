@@ -266,6 +266,13 @@ foreach($vaccines as $vaccine){
 		<td style="color: green"><?php $vaccine_totals +=$disbursement->Quantity; echo $disbursement->Quantity?></td>
 		<td></td>
 		<?php }
+		else if($disbursement->Issued_By_District != null){
+		$received = true;
+		?>
+		<td><?php echo $disbursement->District_Issued_By->name?></td>
+		<td style="color: green"><?php $vaccine_totals +=$disbursement->Quantity; echo $disbursement->Quantity?></td>
+		<td></td>
+		<?php }
 		}
 		if($disbursement->Issued_By_Region == $this->session->userdata('district_province_id')){
 		if($disbursement->Issued_To_Region != null){?>
