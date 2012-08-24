@@ -39,6 +39,7 @@ class Vaccine_Issues_Management extends MY_Controller {
 			}
 			table.data-table td {
 			width: 100px;
+			text-align:center;
 			}
 			</style>
 			";
@@ -56,12 +57,12 @@ class Vaccine_Issues_Management extends MY_Controller {
 				$region_object = Regions::getRegion($district_or_region);
 				$store = $region_object -> name;
 				$owner = "R" . $district_or_region;
-				$sql_issues = "select vaccine_summaries.*,group_concat(vaccine_id,'-',quantity) as vaccine_issues from (SELECT vaccine_id,sum(Quantity) as quantity,issued_to_region,issued_to_district,issued_to_facility FROM `disbursements` where owner = '".$owner."' and Issued_By_Region = '".$district_or_region."'  and vaccine_id != '' and str_to_date(date_issued,'%m/%d/%Y') between str_to_date('" . $start_date . "','%m/%d/%Y') and str_to_date('" . $end_date . "','%m/%d/%Y')  group by vaccine_id,issued_to_region,issued_to_district,issued_to_facility) vaccine_summaries group by issued_to_region,issued_to_district,issued_to_facility";
+				$sql_issues = "select vaccine_summaries.*,group_concat(vaccine_id,'-',quantity) as vaccine_issues from (SELECT vaccine_id,sum(Quantity) as quantity,issued_to_region,issued_to_district,issued_to_facility FROM `disbursements` where owner = '" . $owner . "' and Issued_By_Region = '" . $district_or_region . "'  and vaccine_id != '' and str_to_date(date_issued,'%m/%d/%Y') between str_to_date('" . $start_date . "','%m/%d/%Y') and str_to_date('" . $end_date . "','%m/%d/%Y')  group by vaccine_id,issued_to_region,issued_to_district,issued_to_facility) vaccine_summaries group by issued_to_region,issued_to_district,issued_to_facility";
 			} else if ($identifier == 'district_officer') {
 				$district_object = Districts::getDistrict($district_or_region);
 				$store = $district_object -> name;
 				$owner = "D" . $district_or_region;
-				$sql_issues = "select vaccine_summaries.*,group_concat(vaccine_id,'-',quantity) as vaccine_issues from (SELECT vaccine_id,sum(Quantity) as quantity,issued_to_region,issued_to_district,issued_to_facility FROM `disbursements` where owner = '".$owner."' and Issued_By_Region = '".$district_or_region."'  and vaccine_id != '' and str_to_date(date_issued,'%m/%d/%Y') between str_to_date('" . $start_date . "','%m/%d/%Y') and str_to_date('" . $end_date . "','%m/%d/%Y')  group by vaccine_id,issued_to_region,issued_to_district,issued_to_facility) vaccine_summaries group by issued_to_region,issued_to_district,issued_to_facility";
+				$sql_issues = "select vaccine_summaries.*,group_concat(vaccine_id,'-',quantity) as vaccine_issues from (SELECT vaccine_id,sum(Quantity) as quantity,issued_to_region,issued_to_district,issued_to_facility FROM `disbursements` where owner = '" . $owner . "' and Issued_By_Region = '" . $district_or_region . "'  and vaccine_id != '' and str_to_date(date_issued,'%m/%d/%Y') between str_to_date('" . $start_date . "','%m/%d/%Y') and str_to_date('" . $end_date . "','%m/%d/%Y')  group by vaccine_id,issued_to_region,issued_to_district,issued_to_facility) vaccine_summaries group by issued_to_region,issued_to_district,issued_to_facility";
 			} else if ($identifier == 'national_officer') {
 				$store = "Central Vaccines Store";
 				$sql_issues = "select vaccine_summaries.*,group_concat(vaccine_id,'-',quantity) as vaccine_issues from (SELECT vaccine_id,sum(Quantity) as quantity,issued_to_region,issued_to_district,issued_to_facility FROM `disbursements` where owner = 'N0' and Issued_By_National = '0'  and vaccine_id != '' and str_to_date(date_issued,'%m/%d/%Y') between str_to_date('" . $start_date . "','%m/%d/%Y') and str_to_date('" . $end_date . "','%m/%d/%Y')  group by vaccine_id,issued_to_region,issued_to_district,issued_to_facility) vaccine_summaries group by issued_to_region,issued_to_district,issued_to_facility";
@@ -81,7 +82,7 @@ class Vaccine_Issues_Management extends MY_Controller {
 				} else if (isset($recipient_data['issued_to_facility'])) {
 					$recipient = $recipient_data['issued_to_facility'];
 				}
-				$data_buffer .= "<tr><td>" . $recipient . "</td><td>" . $population . "</td>";
+				$data_buffer .= "<tr><td style='text-align:left;'>" . $recipient . "</td><td>" . $population . "</td>";
 				//Get the vaccine data
 				$vaccine_data = $recipient_data['vaccine_issues'];
 				$separated_data = explode(',', $vaccine_data);
@@ -99,7 +100,7 @@ class Vaccine_Issues_Management extends MY_Controller {
 					}
 					if ($population != 0 && $doses != 0) {
 						$monthly_requirement = ceil(($vaccine -> Doses_Required * $population * $vaccine -> Wastage_Factor) / 12);
-						$mos = number_format(($doses / $monthly_requirement),1);
+						$mos = number_format(($doses / $monthly_requirement), 1);
 					}
 					$data_buffer .= "<td>" . $doses . "</td><td>" . $mos . "</td>";
 				}
@@ -125,9 +126,10 @@ class Vaccine_Issues_Management extends MY_Controller {
 
 	function generatePDF($data, $start_date, $end_date, $store) {
 		$html_title = "<img src='Images/coat_of_arms-resized.png' style='position:absolute; width:96px; height:92px; top:0px; left:0px; '></img>";
-		$html_title .= "<h3 style='text-align:center; text-decoration:underline; margin-top:-50px;'>Vaccine Issues Summary For ".$store."</h3>";
+		$html_title .= "<h3 style='text-align:center; text-decoration:underline; margin-top:-50px;'>Vaccine Issues Summary For " . $store . "</h3>";
+		$start_date = date('d/m/Y', strtotime($start_date));
+		$end_date = date('d/m/Y', strtotime($end_date));
 		$html_title .= "<h5 style='text-align:center;'> from: " . $start_date . " to: " . $end_date . "</h5>";
-
 		$this -> load -> library('mpdf');
 		$this -> mpdf = new mPDF('c', 'A4-L');
 		$this -> mpdf -> SetTitle('Vaccine Issues');

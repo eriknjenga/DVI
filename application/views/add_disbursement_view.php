@@ -6,8 +6,7 @@ $Vaccine_Id = $disbursement['Vaccine_Id'];
 $Date_Issued = $disbursement['Date_Issued'];
 $Quantity = $disbursement['Quantity'];
 $Batch_Number = $disbursement['Batch_Number'];
-$Voucher_Number = $disbursement['Voucher_Number'];
-$Stock_At_Hand = $disbursement['Stock_At_Hand'];
+$Voucher_Number = $disbursement['Voucher_Number']; 
 if($disbursement['Issued_To_Region']>0){
 $Issued_To = "region_".$disbursement['Issued_To_Region'];
 }
@@ -24,8 +23,7 @@ $Date_Issued = Date('m/d/Y');
 $Quantity = "";
 $Batch_Number = "";
 $Voucher_Number = "";
-$Issued_To = "";
-$Stock_At_Hand= "";
+$Issued_To = ""; 
 }
 
 ?>
@@ -157,16 +155,6 @@ echo validation_errors('
 					'id' => 'doses', 'value' =>$Quantity,'class'=>'validate[required,custom[integer]]'
 				 );
 				 echo form_input($data_doses); ?></td>
-		</tr>
-		<tr>
-			<td><span class="mandatory">*</span>Reported Stock at Hand</td>
-			<td><?php
-
-			$data_stock = array(
-				 'name'        => 'stock_at_hand',
-					'id' => 'stock_at_hand', 'value' =>$Stock_At_Hand
-				 );
-				 echo form_input($data_stock); ?></td>
 		</tr>
 		<tr>
 			<td>Batch Number</td>

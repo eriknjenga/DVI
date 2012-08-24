@@ -39,7 +39,7 @@ class Vaccines extends Doctrine_Record {
 	}
 
 	public static function getAll_Minified() {
-		$query = Doctrine_Query::create() -> select("id,Name,Doses_Required,Wastage_Factor") -> from("vaccines") -> where("Active = '1'")->orderBy("Name asc");
+		$query = Doctrine_Query::create() -> select("id,Name,Doses_Required,Wastage_Factor,Tray_Color") -> from("vaccines") -> where("Active = '1'")->orderBy("Name asc");
 		$vaccines = $query -> execute();
 		return $vaccines;
 	}

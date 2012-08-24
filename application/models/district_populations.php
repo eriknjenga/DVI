@@ -16,12 +16,12 @@ class District_Populations extends Doctrine_Record {
 		$query = Doctrine_Query::create() -> select("population") -> from("district_populations") -> where("district_id = '$district' and year = '$year'");
 		$population = $query -> execute(array(), Doctrine::HYDRATE_ARRAY);
 		if (isset($population[0])) {
-			return $population[0]['population'];
+			return str_replace(',', '', $population[0]['population']);
 		} else {
 			$query = Doctrine_Query::create() -> select("population") -> from("district_populations") -> where("district_id = '$district'") -> OrderBy("id desc") -> limit(1);
 			$population = $query -> execute(array(), Doctrine::HYDRATE_ARRAY);
 			if (isset($population[0])) {
-				return $population[0]['population'];
+				return str_replace(',', '', $population[0]['population']);
 			} else {
 				return '0';
 			}

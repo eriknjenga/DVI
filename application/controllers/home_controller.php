@@ -42,7 +42,6 @@ class Home_Controller extends MY_Controller {
 
 	public function new_dashboard() {
 		$identifier = $this -> session -> userdata('user_identifier');
-		echo $identifier;
 		if ($this -> session -> userdata('user_identifier') == 'national_officer') {
 			$data['content_view'] = "national_dashboard_view";
 		}

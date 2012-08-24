@@ -190,7 +190,7 @@ foreach($vaccines as $vaccine){
 		To/From</th>
 		<th colspan="2">Ammount (Doses)</th>
 		<th rowspan="2">Store Balance in Doses</th>
-		<th rowspan="2">Receiving Store</br>Stock at Hand</th>
+		<th rowspan="2">Receiving Store</br>MOS</th>
 		<th rowspan="2">Voucher Number</th>
 		<th colspan="2">Vaccine Information</th>		
 		<th rowspan="2">Entered By</th>
@@ -224,27 +224,33 @@ foreach($vaccines as $vaccine){
 		<?php
 		//retrieve user identifier
 		$identifier = $this->session->userdata('user_identifier');
+		$population = 0;
 		if($identifier == "national_officer"){
 			$store_identity = "N0"; 
 			if($disbursement->Issued_To_National == "0"){
+			$population = Regional_Populations::getNationalPopulation(date('Y'));
 			$received = true;
 			?>
 			<td>UNICEF (New Batch)</td>
-			<td style="color: green"><?php $vaccine_totals +=$disbursement->Quantity; echo $disbursement->Quantity?></td>
+			<td style="color: green"><?php $vaccine_totals +=$disbursement->Quantity; echo number_format($disbursement->Quantity)?></td>
 			<td></td>
 			<?php 
  
 			}
 			if($disbursement->Issued_By_National == "0"){
-			if($disbursement->Issued_To_Region != null){?>
+			if($disbursement->Issued_To_Region != null){
+				$population = Regional_Populations::getRegionalPopulation($disbursement->Issued_To_Region,date('Y'));
+				?>
 			<td><a class="link" href="<?php echo site_url("disbursement_management/drill_down/0/".$disbursement->Issued_To_Region);?>"><?php echo $disbursement->Region_Issued_To->name?></a></td>
 			<td></td>
-			<td style="color: red"><?php $vaccine_totals -=$disbursement->Quantity; echo $disbursement->Quantity?></td>
+			<td style="color: red"><?php $vaccine_totals -=$disbursement->Quantity; echo number_format($disbursement->Quantity)?></td>
 			<?php }
-			else if( $disbursement->Issued_To_District != null){?>
+			else if( $disbursement->Issued_To_District != null){
+				$population = District_Populations::getDistrictPopulation($disbursement->Issued_To_District,date('Y'));
+				?>
 			<td><a class="link" href="<?php echo site_url("disbursement_management/drill_down/1/".$disbursement->Issued_To_District);?>"><?php echo $disbursement->District_Issued_To->name?></a></td>
 			<td></td>
-			<td style="color: red"><?php $vaccine_totals -=$disbursement->Quantity; echo $disbursement->Quantity?></td>
+			<td style="color: red"><?php $vaccine_totals -=$disbursement->Quantity; echo number_format($disbursement->Quantity)?></td>
 			<?php }
 			}		
 
@@ -253,37 +259,44 @@ foreach($vaccines as $vaccine){
 		$store_identity = "R".$this->session->userdata('district_province_id'); 
 		if($disbursement->Issued_To_Region == $this->session->userdata('district_province_id')){
 		if($disbursement->Issued_By_Region != null){
+		$population = Regional_Populations::getRegionalPopulation($disbursement->Issued_To_Region,date('Y'));
 		$received = true;
 		?>
 		<td><?php echo $disbursement->Region_Issued_By->name?></td>
-		<td style="color: green"><?php $vaccine_totals +=$disbursement->Quantity; echo $disbursement->Quantity?></td>
+		<td style="color: green"><?php $vaccine_totals +=$disbursement->Quantity; echo number_format($disbursement->Quantity)?></td>
 		<td></td>
 		<?php }
 		else if($disbursement->Issued_By_National == "0"){
+		$population = Regional_Populations::getRegionalPopulation($disbursement->Issued_To_Region,date('Y'));
 		$received = true;
 		?>
 		<td>National Store</td>
-		<td style="color: green"><?php $vaccine_totals +=$disbursement->Quantity; echo $disbursement->Quantity?></td>
+		<td style="color: green"><?php $vaccine_totals +=$disbursement->Quantity; echo number_format($disbursement->Quantity)?></td>
 		<td></td>
 		<?php }
 		else if($disbursement->Issued_By_District != null){
+		$population = Regional_Populations::getRegionalPopulation($disbursement->Issued_To_Region,date('Y'));
 		$received = true;
 		?>
 		<td><?php echo $disbursement->District_Issued_By->name?></td>
-		<td style="color: green"><?php $vaccine_totals +=$disbursement->Quantity; echo $disbursement->Quantity?></td>
+		<td style="color: green"><?php $vaccine_totals +=$disbursement->Quantity; echo number_format($disbursement->Quantity)?></td>
 		<td></td>
 		<?php }
 		}
 		if($disbursement->Issued_By_Region == $this->session->userdata('district_province_id')){
-		if($disbursement->Issued_To_Region != null){?>
+		if($disbursement->Issued_To_Region != null){
+			$population = Regional_Populations::getRegionalPopulation($disbursement->Issued_To_Region,date('Y'));
+			?>
 		<td><a class="link" href="<?php echo site_url("disbursement_management/drill_down/0/".$disbursement->Issued_To_Region);?>"><?php echo $disbursement->Region_Issued_To->name?></a></td>
 		<td></td>
-		<td style="color: red"><?php $vaccine_totals -=$disbursement->Quantity; echo $disbursement->Quantity?></td>
+		<td style="color: red"><?php $vaccine_totals -=$disbursement->Quantity; echo number_format($disbursement->Quantity)?></td>
 		<?php }
-		else if( $disbursement->Issued_To_District != null){?>
+		else if( $disbursement->Issued_To_District != null){
+			$population = District_Populations::getDistrictPopulation($disbursement->Issued_To_District,date('Y'));
+			?>
 		<td><a class="link" href="<?php echo site_url("disbursement_management/drill_down/1/".$disbursement->Issued_To_District);?>"><?php echo $disbursement->District_Issued_To->name?></a></td>
 		<td></td>
-		<td style="color: red"><?php $vaccine_totals -=$disbursement->Quantity; echo $disbursement->Quantity?></td>
+		<td style="color: red"><?php $vaccine_totals -=$disbursement->Quantity; echo number_format($disbursement->Quantity)?></td>
 		<?php }
 		}
 		}
@@ -294,21 +307,21 @@ foreach($vaccines as $vaccine){
 		$received = true;
 		?>
 		<td><?php echo $disbursement->Region_Issued_By->name?></td>
-		<td style="color: green"><?php $vaccine_totals +=$disbursement->Quantity; echo $disbursement->Quantity?></td>
+		<td style="color: green"><?php $vaccine_totals +=$disbursement->Quantity; echo number_format($disbursement->Quantity)?></td>
 		<td></td>
 		<?php }
 		else if($disbursement->Issued_By_National == "0"){
 		$received = true;
 		?>
 		<td>National Store</td>
-		<td style="color: green"><?php $vaccine_totals +=$disbursement->Quantity; echo $disbursement->Quantity?></td>
+		<td style="color: green"><?php $vaccine_totals +=$disbursement->Quantity; echo number_format($disbursement->Quantity)?></td>
 		<td></td>
 		<?php }
 		else if($disbursement->Issued_By_District != null){
 		$received = true;
 		?>
 		<td><?php echo $disbursement->District_Issued_By->name?></td>
-		<td style="color: green"><?php $vaccine_totals +=$disbursement->Quantity; echo $disbursement->Quantity?></td>
+		<td style="color: green"><?php $vaccine_totals +=$disbursement->Quantity; echo number_format($disbursement->Quantity)?></td>
 		<td></td>
 		<?php }
 		}
@@ -316,12 +329,12 @@ foreach($vaccines as $vaccine){
 		if( $disbursement->Issued_To_District != null){?>
 		<td><a class="link" href="<?php echo site_url("disbursement_management/drill_down/1/".$disbursement->Issued_To_District);?>"><?php echo $disbursement->District_Issued_To->name?></a></td>
 		<td></td>
-		<td style="color: red"><?php $vaccine_totals -=$disbursement->Quantity; echo $disbursement->Quantity?></td>
+		<td style="color: red"><?php $vaccine_totals -=$disbursement->Quantity; echo number_format($disbursement->Quantity)?></td>
 		<?php }
 		else if($disbursement->Issued_To_Facility != null){?>
 		<td><?php echo $disbursement->Facility_Issued_To->name?></td>
 		<td></td>
-		<td style="color: red"><?php $vaccine_totals -=$disbursement->Quantity; echo $disbursement->Quantity?></td>
+		<td style="color: red"><?php $vaccine_totals -=$disbursement->Quantity; echo number_format($disbursement->Quantity)?></td>
 		<?php }
 		}
 		}
@@ -332,8 +345,18 @@ foreach($vaccines as $vaccine){
 		<?php }
 		?>
 		<!--<td><?php echo $vaccine_totals;?></td>-->
-		<td><?php echo $disbursement->Total_Stock_Balance;?></td>
-		<td><?php echo $disbursement->Stock_At_Hand + $disbursement->Quantity;?></td>
+		<td><?php echo number_format($disbursement->Total_Stock_Balance);?></td>
+		<td><?php 
+		if($population>0){
+				//echo $population;
+				$monthly_requirement = ceil(($vaccine -> Doses_Required * $population * $vaccine -> Wastage_Factor) / 12);
+				//echo $vaccine -> Wastage_Factor;
+				//echo $monthly_requirement;
+				echo number_format(($disbursement->Quantity/$monthly_requirement),2);
+		}
+		else{
+			echo "N/A";
+		}?></td>
 		<td><?php echo $disbursement->Voucher_Number;?></td>
 		<?php if($disbursement->Batch_Number != null){?>
 		<td><?php echo $disbursement->Batch_Number?></td>

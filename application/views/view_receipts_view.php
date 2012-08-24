@@ -191,7 +191,7 @@ echo ceil($monthly_requirement);?> Doses</td>
 <td>Stock at Hand Forecast</td>
 <td><?php 
 $population = str_replace(",","",$population); 
-echo floor($current_stocks[$vaccine->id]/$monthly_requirement);?> Month(s)</td>
+echo number_format(($current_stocks[$vaccine->id]/$monthly_requirement),1);?> Month(s)</td>
 </tr>
 
 <tr>

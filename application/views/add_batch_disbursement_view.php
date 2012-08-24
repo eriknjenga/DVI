@@ -144,7 +144,6 @@ echo validation_errors('
 			<th><span class="mandatory">*</span>Date Issued</th>
 			<th><span class="mandatory">*</span>Issued To</th>
 			<th><span class="mandatory">*</span>Doses Issued</th>
-			<th>Reported Stock</th>
 			<th>Batch Number</th>
 			<th>Voucher Number</th>
 			<th>Action</th>
@@ -178,13 +177,6 @@ echo validation_errors('
 					'id' => 'doses','class'=>'validate[required,custom[integer]]'
 				 );
 				 echo form_input($data_doses); ?></td>
-			<td><?php
-
-			$data_stock = array(
-				 'name'        => 'stock_at_hand[]',
-					'id' => 'stock_at_hand'
-				 );
-				 echo form_input($data_stock); ?></td>
 			<td><?php
 
 			$data_batch_number = array(
