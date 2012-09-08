@@ -55,7 +55,7 @@ class Home_Controller extends MY_Controller {
 		$year = date('Y');
 		$data['title'] = "System Dashboard";
 		
-		$data['vaccines'] = Vaccines::getAll();
+		$data['vaccines'] = Vaccines::getAll_Minified();
 		$data['styles'] = array("jquery-ui.css", "tab.css");
 		$data['scripts'] = array("FusionCharts/FusionCharts.js","jquery-ui.js", "advanced_tabs.js");
 		$data['link'] = "home";

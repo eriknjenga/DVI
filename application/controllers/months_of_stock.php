@@ -12,7 +12,7 @@ class Months_Of_Stock extends MY_Controller {
 		$date = date("m/d/Y");
 		$months_required = array();
 		$chart = '
-<chart showLegend="0"  decimals="2" caption="Months of Stock Left" xAxisName="Antigen" yAxisName="Months of Stock" showValues="1" decimals="0" formatNumberScale="0" clickURL="' . base_url() . 'disbursement_management/drill_down/2/0">';
+<chart showLegend="0" bgColor="FFFFFF" showBorder="0" decimals="2" caption="Months of Stock Left" xAxisName="Antigen" yAxisName="Months of Stock" showValues="1" decimals="0" formatNumberScale="0" clickURL="' . base_url() . 'disbursement_management/drill_down/2/0">';
 		$chart .= "<categories>";
 		foreach ($vaccines as $vaccine_object) {
 			$chart .= '<category label="' . $vaccine_object -> Name . '"/>';
@@ -93,10 +93,18 @@ class Months_Of_Stock extends MY_Controller {
 			table.data-table {
 			table-layout: fixed;
 			width: 700px;
+			border-collapse:collapse;
+			border:1px solid black;
 			}
-			table.data-table td {
+			table.data-table td, th {
 			width: 100px;
-			text-align:center;
+			border: 1px solid black;
+			}
+			.leftie{
+				text-align: left !important;
+			}
+			.center{
+				text-align: center !important;
 			}
 			</style> 
 			";
@@ -115,18 +123,26 @@ class Months_Of_Stock extends MY_Controller {
 			$stock_balance = Disbursements::getNationalPeriodBalance($vaccine_object -> id, $now);
 			$months_till_shipment = 0;
 			$next_shipment = "N/A";
+			$doses_needed = "N/A";
 			if (isset($expected_delivery[0])) {
 				$next_shipment = $expected_delivery[0]['next_shipment'];
 				$days_till_shipment = $expected_delivery[0]['difference'];
 				if (isset($days_till_shipment)) {
 					$months_till_shipment = number_format(($days_till_shipment / 30), 1);
 				}
+				$months_left = 0;
+				if ($stock_balance > 0) {
+					$months_left = number_format(($stock_balance / $monthly_requirement), 1);
+				}
+				if ($months_left > $months_till_shipment) {
+					$doses_needed = "None";
+				} else {
+					$doses_needed = number_format((($months_till_shipment - $months_left) * $monthly_requirement), 2);
+				}
+
 			}
-			$months_left = 0;
-			if ($stock_balance > 0) {
-				$months_left = number_format(($stock_balance / $monthly_requirement), 1);
-			}
-			$data_buffer .= "<tr><td>" . $vaccine_object -> Name . "</td><td>" . number_format($stock_balance) . "</td><td>" . $months_left . "</td><td>" . $next_shipment . "</td><td>" . $months_till_shipment . "</td><td>" . $monthly_requirement . "</td><td>" . number_format((($months_till_shipment-$months_left)*$monthly_requirement),2) . "</td></tr>";
+
+			$data_buffer .= "<tr><td class='leftie'>" . $vaccine_object -> Name . "</td><td class='center'>" . number_format($stock_balance) . "</td><td class='center'>" . $months_left . "</td><td class='center'>" . $next_shipment . "</td><td class='center'>" . $months_till_shipment . "</td><td class='center'>" . $monthly_requirement . "</td><td class='center'>" . $doses_needed . "</td></tr>";
 
 		}
 		$data_buffer .= "</table>";
@@ -135,7 +151,7 @@ class Months_Of_Stock extends MY_Controller {
 	}
 
 	public function echoTitles() {
-		return "<tr><th>Antigen</th><th>Current Stock Balance</th><th>MOS Left</th><th>Next Shipment Date</th><th>MOS Needed</th><th>Monthly Requirement</th><th>Doses Needed</th></tr>";
+		return "<tr><th>Antigen</th><th>Current Stock Balance</th><th>MOS Available</th><th>Next Shipment Date</th><th>MOS Needed</th><th>Monthly Requirement</th><th>Additional Doses Needed</th></tr>";
 	}
 
 	function generatePDF($data) {
