@@ -189,8 +189,9 @@
 	}
 </style>
 
-
+<a class="link" style="margin-left:5px;" href="<?php echo site_url('home_controller/dashboard')?>">View Tabular Stock Status</a>
 <div class="top_graphs_container">
+
 <div class="graph">
 <div class="larger_graph">
 	<a class="link view_larger_graph" href="#" id="mos_graph">Enlarge</a> | <a class="link" href="<?php echo base_url();?>months_of_stock/download_national">Download Data</a>
