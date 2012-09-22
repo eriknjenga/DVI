@@ -106,7 +106,7 @@ class MOS_Trend extends MY_Controller {
 		}
 
 		$chart = '
-<chart bgColor="FFFFFF" showBorder="0" caption="Monthly Stock at Hand Summary" subcaption="For the year ' . $year . '" xAxisName="Month" yAxisName="Months of Stock"  showValues="0" alternateHGridColor="FCB541" alternateHGridAlpha="20" divLineColor="FCB541" divLineAlpha="50" canvasBorderColor="666666" baseFontColor="666666">
+<chart bgColor="FFFFFF" showBorder="0" showAlternateHGridColor="0" divLineAlpha="10" caption="Monthly Stock at Hand Summary" subcaption="For the year ' . $year . '" xAxisName="Month" yAxisName="Months of Stock"  showValues="0" >
 <categories>
 <category label="Jan"/>
 <category label=""/>
@@ -240,7 +240,7 @@ class MOS_Trend extends MY_Controller {
 				if ($stock_balance > 0) {
 					$mos_balance = number_format(($stock_balance / $monthly_requirement), 2);
 				}
-				$monthly_opening_stocks[$month][$vaccine_object -> id]['stock_balance'] = $stock_balance;
+				$monthly_opening_stocks[$month][$vaccine_object -> id]['stock_balance'] = number_format($stock_balance+0);
 				$monthly_opening_stocks[$month][$vaccine_object -> id]['mos_balance'] = $mos_balance;
 				$counter += 2;
 			}
@@ -263,6 +263,9 @@ class MOS_Trend extends MY_Controller {
 			.center{
 				text-align: center !important;
 			}
+			.right{
+				text-align: right !important;
+			}
 			</style> 
 			";
 		$data_buffer .= "<table class='data-table'>";
@@ -282,7 +285,7 @@ class MOS_Trend extends MY_Controller {
 			$date = date("M-d", mktime(0, 0, 0, $month_number, $month_date, $year));
 			$data_buffer .= "<td>" . $date . "</td>";
 			foreach ($vaccine_objects as $vaccine_object) {
-				$data_buffer .= "<td>" . $monthly_opening_stocks[$month][$vaccine_object -> id]['mos_balance'] . "</td><td>" . $monthly_opening_stocks[$month][$vaccine_object -> id]['stock_balance'] . "</td>";
+				$data_buffer .= "<td class='center'>" . $monthly_opening_stocks[$month][$vaccine_object -> id]['mos_balance'] . "</td><td class='right'>" . $monthly_opening_stocks[$month][$vaccine_object -> id]['stock_balance'] . "</td>";
 			}
 			$data_buffer .= "</tr>";
 			$counter += 2;
@@ -295,7 +298,7 @@ class MOS_Trend extends MY_Controller {
 	function generatePDF($data,$year) {
 		$html_title = "<img src='Images/coat_of_arms-resized.png' style='position:absolute; width:96px; height:92px; top:0px; left:0px; '></img>";
 		$html_title .= "<h3 style='text-align:center; text-decoration:underline; margin-top:-50px;'>Antigen MOS Balance Trend</h3>";
-		$date = date('d/m/Y');
+		$date = date('d-M-Y');
 		$html_title .= "<h5 style='text-align:center;'> for the year: ".$year." as at: " . $date . "</h5>";
 
 		$this -> load -> library('mpdf');

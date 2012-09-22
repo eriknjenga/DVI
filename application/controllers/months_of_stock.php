@@ -12,7 +12,7 @@ class Months_Of_Stock extends MY_Controller {
 		$date = date("m/d/Y");
 		$months_required = array();
 		$chart = '
-<chart showLegend="0" bgColor="FFFFFF" showBorder="0" decimals="2" caption="Months of Stock Left" xAxisName="Antigen" yAxisName="Months of Stock" showValues="1" decimals="0" formatNumberScale="0" clickURL="' . base_url() . 'disbursement_management/drill_down/2/0">';
+<chart showLegend="0" bgColor="FFFFFF" showBorder="0" plotGradientColor="" showAlternateHGridColor="0" divLineAlpha="10" decimals="2" caption="Months of Stock Available at Central Vaccine Store" xAxisName="Antigen" yAxisName="Months of Stock" showValues="1" decimals="0" formatNumberScale="0" clickURL="' . base_url() . 'disbursement_management/drill_down/2/0">';
 		$chart .= "<categories>";
 		foreach ($vaccines as $vaccine_object) {
 			$chart .= '<category label="' . $vaccine_object -> Name . '"/>';
@@ -103,6 +103,9 @@ class Months_Of_Stock extends MY_Controller {
 			.leftie{
 				text-align: left !important;
 			}
+			.right{
+				text-align: right !important;
+			}
 			.center{
 				text-align: center !important;
 			}
@@ -119,6 +122,7 @@ class Months_Of_Stock extends MY_Controller {
 			$population = regional_populations::getNationalPopulation($year);
 			$population = str_replace(",", "", $population);
 			$monthly_requirement = ceil(($vaccine_object -> Doses_Required * $population * $vaccine_object -> Wastage_Factor) / 12);
+			
 			$expected_delivery = Provisional_Plan::getNextDelivery($vaccine_object -> id);
 			$stock_balance = Disbursements::getNationalPeriodBalance($vaccine_object -> id, $now);
 			$months_till_shipment = 0;
@@ -141,8 +145,8 @@ class Months_Of_Stock extends MY_Controller {
 				}
 
 			}
-
-			$data_buffer .= "<tr><td class='leftie'>" . $vaccine_object -> Name . "</td><td class='center'>" . number_format($stock_balance) . "</td><td class='center'>" . $months_left . "</td><td class='center'>" . $next_shipment . "</td><td class='center'>" . $months_till_shipment . "</td><td class='center'>" . $monthly_requirement . "</td><td class='center'>" . $doses_needed . "</td></tr>";
+			$monthly_requirement = number_format($monthly_requirement+0);
+			$data_buffer .= "<tr><td class='leftie'>" . $vaccine_object -> Name . "</td><td class='right'>" . number_format($stock_balance) . "</td><td class='center'>" . $months_left . "</td><td class='center'>" . $next_shipment . "</td><td class='center'>" . $months_till_shipment . "</td><td class='right'>" . $monthly_requirement . "</td><td class='right'>" . $doses_needed . "</td></tr>";
 
 		}
 		$data_buffer .= "</table>";
@@ -157,7 +161,7 @@ class Months_Of_Stock extends MY_Controller {
 	function generatePDF($data) {
 		$html_title = "<img src='Images/coat_of_arms-resized.png' style='position:absolute; width:96px; height:92px; top:0px; left:0px; '></img>";
 		$html_title .= "<h3 style='text-align:center; text-decoration:underline; margin-top:-50px;'>Antigen MOS Balance</h3>";
-		$date = date('d/m/Y');
+		$date = date('d-M-Y');
 		$html_title .= "<h5 style='text-align:center;'> as at: " . $date . "</h5>";
 
 		$this -> load -> library('mpdf');

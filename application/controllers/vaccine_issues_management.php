@@ -31,17 +31,28 @@ class Vaccine_Issues_Management extends MY_Controller {
 
 		$valid = $this -> validate_form();
 		if ($valid) {
-			$data_buffer = "
+	$data_buffer = "
 			<style>
 			table.data-table {
-			table-layout: fixed; 
-			width: 1100px;
+			table-layout: fixed;
+			width: 700px;
+			border-collapse:collapse;
+			border:1px solid black;
 			}
-			table.data-table td {
+			table.data-table td, th {
 			width: 100px;
-			text-align:center;
+			border: 1px solid black;
 			}
-			</style>
+			.leftie{
+				text-align: left !important;
+			}
+			.center{
+				text-align: center !important;
+			}
+			.right{
+				text-align: right !important;
+			}
+			</style> 
 			";
 			$start_date = $this -> input -> post("start_date");
 			$end_date = $this -> input -> post("end_date");
@@ -82,7 +93,7 @@ class Vaccine_Issues_Management extends MY_Controller {
 				} else if (isset($recipient_data['issued_to_facility'])) {
 					$recipient = $recipient_data['issued_to_facility'];
 				}
-				$data_buffer .= "<tr><td style='text-align:left;'>" . $recipient . "</td><td>" . $population . "</td>";
+				$data_buffer .= "<tr><td style='text-align:left;'>" . $recipient . "</td><td class='right'>" . number_format($population+0) . "</td>";
 				//Get the vaccine data
 				$vaccine_data = $recipient_data['vaccine_issues'];
 				$separated_data = explode(',', $vaccine_data);
@@ -102,7 +113,7 @@ class Vaccine_Issues_Management extends MY_Controller {
 						$monthly_requirement = ceil(($vaccine -> Doses_Required * $population * $vaccine -> Wastage_Factor) / 12);
 						$mos = number_format(($doses / $monthly_requirement), 1);
 					}
-					$data_buffer .= "<td>" . $doses . "</td><td>" . $mos . "</td>";
+					$data_buffer .= "<td class='right'>" . number_format($doses+0) . "</td><td class='center'>" . $mos . "</td>";
 				}
 				$data_buffer .= "</tr>";
 

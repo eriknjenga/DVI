@@ -70,7 +70,7 @@ class Antigen_Recipients extends MY_Controller {
 		//Create the labels for the x axis
 		$x_axis_increments = ($max_forecast / 10);
 		$x_axis_increments_counter = 0;
-		$chart = '<chart bgColor="FFFFFF" showBorder="0" xAxisLabelMode="auto" caption="Stock Distribution for ' . $vaccine_object -> Name . '" subCaption="for ' . $periods[$quarter] . ', ' . $year . '"  yAxisName="Receipts" xAxisName="Forecasted" showLegend="0" xAxisMaxValue="' . $max_forecast . '" xAxisMinValue="0">
+		$chart = '<chart bgColor="FFFFFF" showAlternateHGridColor="0" divLineAlpha="10" showBorder="0" xAxisLabelMode="auto" caption="Consumption Vs. Forecast for ' . $vaccine_object -> Name . '" subCaption="for ' . $periods[$quarter] . ', ' . $year . '"  yAxisName="Consumption" xAxisName="Forecast" showLegend="0" xAxisMaxValue="' . $max_forecast . '" xAxisMinValue="0">
 		<categories verticalLineColor="666666" verticalLineThickness="1">';
 		for ($x = 0; $x <= 10; $x++) {
 			$x_axis_increments_counter += $x_axis_increments;
@@ -143,6 +143,9 @@ class Antigen_Recipients extends MY_Controller {
 			.center{
 				text-align: center !important;
 			}
+			.right{
+				text-align: right !important;
+			}
 			</style> 
 			";
 		$data_buffer .= "<table class='data-table'>";
@@ -150,7 +153,7 @@ class Antigen_Recipients extends MY_Controller {
 		$district_data = array();
 		foreach ($vaccines as $vaccine_object) {
 			//query to get all the districts that received vaccines from the national store in that period
-			$sql_recipients = "select districts_issued.*,sum(quantity) as total_received,d2.name as district_name  from (select distinct issued_to_district as district_id from disbursements where owner = 'N0' and issued_to_district>0 and date_issued_timestamp between '" . $quarter_start_date . "' and '" . $quarter_end_date . "') districts_issued left join disbursements d on district_id  = d.issued_to_district left join districts d2 on district_id = d2.ID where date_issued_timestamp between '" . $quarter_start_date . "' and '" . $quarter_end_date . "' and owner != concat('D',district_id) and vaccine_id = '" . $vaccine_object -> id . "' group by district_id";
+			$sql_recipients = "select districts_issued.*,sum(quantity) as total_received,d2.name as district_name  from (select distinct issued_to_district as district_id from disbursements where owner = 'N0' and issued_to_district>0 and date_issued_timestamp between '" . $quarter_start_date . "' and '" . $quarter_end_date . "') districts_issued left join disbursements d on district_id  = d.issued_to_district left join districts d2 on district_id = d2.ID where date_issued_timestamp between '" . $quarter_start_date . "' and '" . $quarter_end_date . "' and owner != concat('D',district_id) and vaccine_id = '" . $vaccine_object -> id . "' group by district_id order by d2.name";
 			//echo $sql_recipients;
 			$query = $this -> db -> query($sql_recipients);
 			$recipients_data = $query -> result_array();
@@ -182,9 +185,9 @@ class Antigen_Recipients extends MY_Controller {
 			$data_buffer .= "<tr><td class='leftie'>" . $row_data['district'] . "</td>";
 			foreach ($vaccines as $vaccine_object) {
 				if (isset($row_data[$vaccine_object -> id])) {
-					$data_buffer .= "<td>" . $row_data[$vaccine_object -> id]['forecast'] . "</td><td>" . $row_data[$vaccine_object -> id]['consumption'] . "</td>";
+					$data_buffer .= "<td class='right'>" . number_format($row_data[$vaccine_object -> id]['forecast']+0) . "</td><td class='right'>" . number_format($row_data[$vaccine_object -> id]['consumption']+0) . "</td>";
 				} else {
-					$data_buffer .= "<td>-</td><td>-</td>";
+					$data_buffer .= "<td class='center'>-</td><td class='center'>-</td>";
 				}
 			}
 			$data_buffer .= "</tr>";
@@ -196,7 +199,7 @@ class Antigen_Recipients extends MY_Controller {
 
 
 	public function echoTitles($vaccines) {
-		$initial_headers = "<tr><th rowspan='2'>District</th>";
+		$initial_headers = "<thead><tr><th rowspan='2'>District</th>";
 		foreach ($vaccines as $vaccine) {
 			$initial_headers .= "<th colspan='2'>" . $vaccine -> Name . "</th>";
 		}
@@ -204,14 +207,14 @@ class Antigen_Recipients extends MY_Controller {
 		foreach ($vaccines as $vaccine) {
 			$initial_headers .= "<th>Forecast</th><th>Consumption</th>";
 		}
-		$initial_headers .= "</tr>";
+		$initial_headers .= "</tr></thead>";
 		return $initial_headers;
 	}
 
 	function generatePDF($data,$quarter,$year) {
 		$html_title = "<img src='Images/coat_of_arms-resized.png' style='position:absolute; width:96px; height:92px; top:0px; left:0px; '></img>";
 		$html_title .= "<h3 style='text-align:center; text-decoration:underline; margin-top:-50px;'>Antigen Stock Distribution</h3>";
-		$date = date('d/m/Y');
+		$date = date('d-M-Y');
 		$html_title .= "<h5 style='text-align:center;'> for : ".$quarter.", ".$year." as at: " . $date . "</h5>";
 
 		$this -> load -> library('mpdf');

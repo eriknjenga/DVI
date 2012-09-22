@@ -32,17 +32,28 @@ class Consumption_Management extends MY_Controller {
 
 		$valid = $this -> validate_form();
 		if ($valid) {
-			$data_buffer = "
+		$data_buffer = "
 			<style>
 			table.data-table {
 			table-layout: fixed;
 			width: 700px;
+			border-collapse:collapse;
+			border:1px solid black;
 			}
-			table.data-table td {
+			table.data-table td, th {
 			width: 100px;
-			text-align:center;
+			border: 1px solid black;
 			}
-			</style>
+			.leftie{
+				text-align: left !important;
+			}
+			.right{
+				text-align: right !important;
+			}
+			.center{
+				text-align: center !important;
+			}
+			</style> 
 			";
 			$start_date = $this -> input -> post("start_date");
 			$end_date = $this -> input -> post("end_date");
@@ -64,7 +75,7 @@ class Consumption_Management extends MY_Controller {
 					$opening_balance = Disbursements::getRegionalPeriodBalance($district_or_region, $vaccine -> id, strtotime($start_date));
 					$closing_balance = Disbursements::getRegionalPeriodBalance($district_or_region, $vaccine -> id, strtotime($end_date));
 					$owner = "R" . $district_or_region;
-					$sql_consumption = "select (SELECT date_format(max(str_to_date(Date_Issued,'%m/%d/%Y')),'%d/%m/%Y')  FROM `disbursements` where Owner = '" . $owner . "' and str_to_date(Date_Issued,'%m/%d/%Y') between str_to_date('" . $start_date . "','%m/%d/%Y') and str_to_date('" . $end_date . "','%m/%d/%Y') and Vaccine_Id = '" . $vaccine -> id . "' and total_stock_balance>0)as last_stock_count,(SELECT sum(Quantity)FROM `disbursements` where Issued_By_Region = '" . $district_or_region . "' and Owner = '" . $owner . "' and str_to_date(Date_Issued,'%m/%d/%Y') between str_to_date('" . $start_date . "','%m/%d/%Y') and
+					$sql_consumption = "select (SELECT date_format(max(str_to_date(Date_Issued,'%m/%d/%Y')),'%d-%b-%Y')  FROM `disbursements` where Owner = '" . $owner . "' and str_to_date(Date_Issued,'%m/%d/%Y') between str_to_date('" . $start_date . "','%m/%d/%Y') and str_to_date('" . $end_date . "','%m/%d/%Y') and Vaccine_Id = '" . $vaccine -> id . "' and total_stock_balance>0)as last_stock_count,(SELECT sum(Quantity)FROM `disbursements` where Issued_By_Region = '" . $district_or_region . "' and Owner = '" . $owner . "' and str_to_date(Date_Issued,'%m/%d/%Y') between str_to_date('" . $start_date . "','%m/%d/%Y') and
 str_to_date('" . $end_date . "','%m/%d/%Y') and Vaccine_Id = '" . $vaccine -> id . "')as total_issued,(SELECT sum(Quantity) FROM `disbursements` where Issued_To_Region = '" . $district_or_region . "' and Owner = '" . $owner . "' and str_to_date(Date_Issued,'%m/%d/%Y') between str_to_date('" . $start_date . "','%m/%d/%Y') and
 str_to_date('" . $end_date . "','%m/%d/%Y') and Vaccine_Id = '" . $vaccine -> id . "')as total_received";
 				} else if ($identifier == 'district_officer') {
@@ -74,7 +85,7 @@ str_to_date('" . $end_date . "','%m/%d/%Y') and Vaccine_Id = '" . $vaccine -> id
 					$opening_balance = Disbursements::getDistrictPeriodBalance($district_or_region, $vaccine -> id, strtotime($start_date));
 					$closing_balance = Disbursements::getDistrictPeriodBalance($district_or_region, $vaccine -> id, strtotime($end_date));
 					$owner = "D" . $district_or_region;
-					$sql_consumption = "select (SELECT date_format(max(str_to_date(Date_Issued,'%m/%d/%Y')),'%d/%m/%Y')  FROM `disbursements` where Owner = '" . $owner . "' and str_to_date(Date_Issued,'%m/%d/%Y') between str_to_date('" . $start_date . "','%m/%d/%Y') and str_to_date('" . $end_date . "','%m/%d/%Y') and Vaccine_Id = '" . $vaccine -> id . "' and total_stock_balance>0)as last_stock_count,(SELECT sum(Quantity)FROM `disbursements` where Issued_By_District = '" . $district_or_region . "' and Owner = '" . $owner . "' and str_to_date(Date_Issued,'%m/%d/%Y') between str_to_date('" . $start_date . "','%m/%d/%Y') and
+					$sql_consumption = "select (SELECT date_format(max(str_to_date(Date_Issued,'%m/%d/%Y')),'%d-%b-%Y')  FROM `disbursements` where Owner = '" . $owner . "' and str_to_date(Date_Issued,'%m/%d/%Y') between str_to_date('" . $start_date . "','%m/%d/%Y') and str_to_date('" . $end_date . "','%m/%d/%Y') and Vaccine_Id = '" . $vaccine -> id . "' and total_stock_balance>0)as last_stock_count,(SELECT sum(Quantity)FROM `disbursements` where Issued_By_District = '" . $district_or_region . "' and Owner = '" . $owner . "' and str_to_date(Date_Issued,'%m/%d/%Y') between str_to_date('" . $start_date . "','%m/%d/%Y') and
 str_to_date('" . $end_date . "','%m/%d/%Y') and Vaccine_Id = '" . $vaccine -> id . "')as total_issued,(SELECT sum(Quantity) FROM `disbursements` where Issued_To_District = '" . $district_or_region . "' and Owner = '" . $owner . "' and str_to_date(Date_Issued,'%m/%d/%Y') between str_to_date('" . $start_date . "','%m/%d/%Y') and
 str_to_date('" . $end_date . "','%m/%d/%Y') and Vaccine_Id = '" . $vaccine -> id . "')as total_received";
 				} else if ($identifier == 'national_officer') {
@@ -82,14 +93,14 @@ str_to_date('" . $end_date . "','%m/%d/%Y') and Vaccine_Id = '" . $vaccine -> id
 					$population = Regional_Populations::getNationalPopulation(date('Y'));
 					$opening_balance = Disbursements::getNationalPeriodBalance($vaccine -> id, strtotime($start_date));
 					$closing_balance = Disbursements::getNationalPeriodBalance($vaccine -> id, strtotime($end_date));
-					$sql_consumption = "select (SELECT date_format(max(str_to_date(Date_Issued,'%m/%d/%Y')),'%d/%m/%Y')  FROM `disbursements` where Owner = 'N0' and str_to_date(Date_Issued,'%m/%d/%Y') between str_to_date('" . $start_date . "','%m/%d/%Y') and str_to_date('" . $end_date . "','%m/%d/%Y') and Vaccine_Id = '" . $vaccine -> id . "' and total_stock_balance>0)as last_stock_count,(SELECT sum(Quantity)FROM `disbursements` where Issued_By_National = '0' and Owner = 'N0' and str_to_date(Date_Issued,'%m/%d/%Y') between str_to_date('" . $start_date . "','%m/%d/%Y') and
+					$sql_consumption = "select (SELECT date_format(max(str_to_date(Date_Issued,'%m/%d/%Y')),'%d-%b-%Y')  FROM `disbursements` where Owner = 'N0' and str_to_date(Date_Issued,'%m/%d/%Y') between str_to_date('" . $start_date . "','%m/%d/%Y') and str_to_date('" . $end_date . "','%m/%d/%Y') and Vaccine_Id = '" . $vaccine -> id . "' and total_stock_balance>0)as last_stock_count,(SELECT sum(Quantity)FROM `disbursements` where Issued_By_National = '0' and Owner = 'N0' and str_to_date(Date_Issued,'%m/%d/%Y') between str_to_date('" . $start_date . "','%m/%d/%Y') and
 str_to_date('" . $end_date . "','%m/%d/%Y') and Vaccine_Id = '" . $vaccine -> id . "')as total_issued,(SELECT sum(Quantity) FROM `disbursements` where Issued_To_National = '0' and Owner = 'N0' and str_to_date(Date_Issued,'%m/%d/%Y') between str_to_date('" . $start_date . "','%m/%d/%Y') and
 str_to_date('" . $end_date . "','%m/%d/%Y') and Vaccine_Id = '" . $vaccine -> id . "')as total_received";
 				}
 				$query = $this -> db -> query($sql_consumption);
 				$vaccine_data = $query -> row();
 				$monthly_requirement = ceil(($vaccine -> Doses_Required * $population * $vaccine -> Wastage_Factor) / 12);
-				$data_buffer .= "<tr><td style='text-align:left;'>" . $vaccine -> Name . "</td><td>" . number_format($opening_balance + 0) . "</td><td>" . number_format($vaccine_data -> total_received + 0) . "</td><td>" . number_format($vaccine_data -> total_issued + 0) . "</td><td>" . number_format(($closing_balance - ($opening_balance + $vaccine_data -> total_received - $vaccine_data -> total_issued)) + 0) . "</td><td>" . number_format($closing_balance + 0) . "</td><td>" . number_format(($closing_balance / $monthly_requirement), 1) . "</td><td>" . $vaccine_data -> last_stock_count . "</td></tr>";
+				$data_buffer .= "<tr><td style='text-align:left;'>" . $vaccine -> Name . "</td><td class='right'>" . number_format($opening_balance + 0) . "</td><td  class='right'>" . number_format($vaccine_data -> total_received + 0) . "</td><td class='right'>" . number_format($vaccine_data -> total_issued + 0) . "</td><td class='right'>" . number_format(($closing_balance - ($opening_balance + $vaccine_data -> total_received - $vaccine_data -> total_issued)) + 0) . "</td><td class='right'>" . number_format($closing_balance + 0) . "</td><td class='center'>" . number_format(($closing_balance / $monthly_requirement), 1) . "</td><td class='center'>" . $vaccine_data -> last_stock_count . "</td></tr>";
 			}
 			$data_buffer .= "</table>";
 			$this -> generatePDF($data_buffer, $start_date, $end_date, $store);
@@ -106,8 +117,8 @@ str_to_date('" . $end_date . "','%m/%d/%Y') and Vaccine_Id = '" . $vaccine -> id
 	function generatePDF($data, $start_date, $end_date, $store) {
 		$html_title = "<img src='Images/coat_of_arms-resized.png' style='position:absolute; width:96px; height:92px; top:0px; left:0px; '></img>";
 		$html_title .= "<h3 style='text-align:center; text-decoration:underline; margin-top:-50px;'>Vaccine Consumption Summary For " . $store . "</h3>";
-		$start_date = date('d/m/Y',strtotime($start_date));
-		$end_date = date('d/m/Y',strtotime($end_date));
+		$start_date = date('d-M-Y',strtotime($start_date));
+		$end_date = date('d-M-Y',strtotime($end_date));
 		$html_title .= "<h5 style='text-align:center;'> from: " . $start_date . " to: " . $end_date . "</h5>";
 
 		$this -> load -> library('mpdf');

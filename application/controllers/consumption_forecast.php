@@ -55,7 +55,7 @@ class Consumption_Forecast extends MY_Controller {
 		if ($quarterly_consumption > $max_value) {
 			$max_value = $quarterly_consumption;
 		}
-		$chart = '<chart bgColor="FFFFFF" showBorder="0" caption="Forecast vs. Consumption for ' . $vaccine_object -> Name . '" xAxisName="Quarterly Consumption" yAxisName="Doses" showValues="0" decimals="0" formatNumberScale="0" useRoundEdges="0">
+		$chart = '<chart bgColor="FFFFFF" plotGradientColor="" showAlternateHGridColor="0" divLineAlpha="10" showBorder="0" caption="Forecast vs. Consumption for ' . $vaccine_object -> Name . '" subCaption="at Central Vaccines Store" xAxisName="Quarterly Consumption" yAxisName="Doses" showValues="0" decimals="0" formatNumberScale="0" useRoundEdges="0">
 <set label="Jan - Mar" value="' . $quarter_one_consumption . '"/>
 <set label="Apr - Jun" value="' . $quarter_two_consumption . '"/>
 <set label="Jul - Sep" value="' . $quarter_three_consumption . '"/>
@@ -93,6 +93,9 @@ class Consumption_Forecast extends MY_Controller {
 			.center{
 				text-align: center !important;
 			}
+			.right{
+				text-align: right !important;
+			}
 			</style> 
 			";
 		$data_buffer .= "<table class='data-table'>";
@@ -122,7 +125,7 @@ class Consumption_Forecast extends MY_Controller {
 			$quarter_two_consumption = Disbursements::getNationalIssuesTotals($vaccine_object -> id, $quarter_two_start, $quarter_two_end);
 			$quarter_three_consumption = Disbursements::getNationalIssuesTotals($vaccine_object -> id, $quarter_three_start, $quarter_three_end);
 			$quarter_four_consumption = Disbursements::getNationalIssuesTotals($vaccine_object -> id, $quarter_four_start, $quarter_four_end);
-			$data_buffer .= "<tr><td class='leftie'>" . $vaccine_object -> Name . "</td><td class='center'>" . number_format($quarterly_consumption) . "</td><td class='center'>" . number_format($quarter_one_consumption) . "</td><td class='center'>" . number_format($quarterly_consumption - $quarter_one_consumption) . "</td><td class='center'>" . number_format($quarter_two_consumption) . "</td><td class='center'>" . number_format($quarterly_consumption - $quarter_two_consumption) . "</td><td class='center'>" . number_format($quarter_three_consumption) . "</td><td class='center'>" . number_format($quarterly_consumption - $quarter_three_consumption) . "</td><td class='center'>" . number_format($quarter_four_consumption) . "</td><td class='center'>" . number_format($quarterly_consumption - $quarter_four_consumption) . "</td></tr>";
+			$data_buffer .= "<tr><td class='leftie'>" . $vaccine_object -> Name . "</td><td class='right'>" . number_format($quarterly_consumption) . "</td><td class='right'>" . number_format($quarter_one_consumption) . "</td><td class='right'>" . number_format($quarterly_consumption - $quarter_one_consumption) . "</td><td class='right'>" . number_format($quarter_two_consumption) . "</td><td class='right'>" . number_format($quarterly_consumption - $quarter_two_consumption) . "</td><td class='right'>" . number_format($quarter_three_consumption) . "</td><td class='right'>" . number_format($quarterly_consumption - $quarter_three_consumption) . "</td><td class='right'>" . number_format($quarter_four_consumption) . "</td><td class='right'>" . number_format($quarterly_consumption - $quarter_four_consumption) . "</td></tr>";
 		}
 		$data_buffer .= "</table>";
 		$this -> generatePDF($data_buffer,$year);
@@ -130,22 +133,31 @@ class Consumption_Forecast extends MY_Controller {
 	}
 
 	public function echoTitles() {
-		$title = "<tr><th rowspan='2'>Antigen</th><th rowspan='2'>Quarterly Forecast</th><th colspan='2'>Quarter 1</th><th colspan='2'>Quarter 2</th><th colspan='2'>Quarter 3</th><th colspan='2'>Quarter 4</th></tr>";
-		$title .= "<tr><th>Consumed</th><th>Difference</th><th>Consumed</th><th>Difference</th><th>Consumed</th><th>Difference</th><th>Consumed</th><th>Difference</th></tr>";
+		$title = "<thead><tr><th rowspan='2'>Antigen</th><th rowspan='2'>Quarterly Forecast</th><th colspan='2'>Quarter 1</th><th colspan='2'>Quarter 2</th><th colspan='2'>Quarter 3</th><th colspan='2'>Quarter 4</th></tr>";
+		$title .= "<tr><th>Consumed</th><th>Difference</th><th>Consumed</th><th>Difference</th><th>Consumed</th><th>Difference</th><th>Consumed</th><th>Difference</th></tr></thead>";
 		return $title;
 	}
 
 	function generatePDF($data,$year) {
 		$html_title = "<img src='Images/coat_of_arms-resized.png' style='position:absolute; width:96px; height:92px; top:0px; left:0px; '></img>";
 		$html_title .= "<h3 style='text-align:center; text-decoration:underline; margin-top:-50px;'>Antigen Consumption Vs. Forecast</h3>";
-		$date = date('d/m/Y');
+		$date = date('d-M-Y');
 		$html_title .= "<h5 style='text-align:center;'>for the year: ".$year." as at: " . $date . "</h5>";
 
 		$this -> load -> library('mpdf');
 		$this -> mpdf = new mPDF('c', 'A4');
 		$this -> mpdf -> SetTitle('Vaccine Consumption Vs. Forecast');
-		$this -> mpdf -> WriteHTML($html_title);
+		
 		$this -> mpdf -> simpleTables = true;
+		$this -> mpdf -> defaultfooterfontsize = 9;
+		/* blank, B, I, or BI */
+		$this -> mpdf -> defaultfooterline = 1;
+		/* 1 to include line below header/above footer */
+		$this -> mpdf -> mirrorMargins = 1;
+		$mpdf -> defaultfooterfontstyle = B;
+		$this -> mpdf -> SetFooter('Generated on: {DATE d/m/Y}|{PAGENO}|Consumption & Forecast Report');
+		/* defines footer for Odd and Even Pages - placed at Outer margin */
+		$this -> mpdf -> WriteHTML($html_title);
 		$this -> mpdf -> WriteHTML($data);
 		$this -> mpdf -> WriteHTML($html_footer);
 		$report_name = "Vaccine Consumption Vs. Forecast.pdf";

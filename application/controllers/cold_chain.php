@@ -58,14 +58,14 @@ class Cold_Chain extends MY_Controller {
 			$counter++;
 		}
 
-		$chart = '<chart palette="1" bgColor="FFFFFF" showBorder="0" decimals="2" caption="Cold Chain Utilization" xAxisName="Fridge Type" yAxisName="Capacity (Litres)" shownames="1" showvalues="0" showSum="1" overlapColumns="0" clickURL="' . base_url() . 'cold_chain/national_utilization_report">
+		$chart = '<chart palette="1" bgColor="FFFFFF" plotGradientColor="" showAlternateHGridColor="0" showAlternateVGridColor="0" divLineAlpha="20" showBorder="0" decimals="2" caption="Cold Chain Utilization - Central Vaccine Store" xAxisName="Compartment" yAxisName="Capacity (Litres)" shownames="1" showvalues="0" showSum="1" overlapColumns="0" clickURL="' . base_url() . 'cold_chain/national_utilization_report">
 <categories>
 <category label="+4"/>
 <category label="-20"/>
 </categories>';
 		$counter = 0;
 		foreach ($all_vaccines as $vaccine) {
-			
+
 			if (isset($fridge_capacities[$counter])) {
 				$chart .= '<dataset seriesName="' . $fridge_content[$counter] . '">';
 				$chart .= '<set value="' . $fridge_capacities[$counter] . '"/>';
@@ -80,7 +80,7 @@ class Cold_Chain extends MY_Controller {
 			}
 			$counter++;
 		}
-		$chart .= '<dataset seriesName="Available" showValues="0" color="D9D9D9">
+		$chart .= '<dataset seriesName="Available" showValues="0" color="FFFFFF">
 <set value="' . $total_net_volume_4deg . '"/>
 <set value="' . $total_net_volume_minus_20deg . '"/>
 </dataset>';
@@ -105,10 +105,21 @@ class Cold_Chain extends MY_Controller {
 			table.data-table {
 			table-layout: fixed;
 			width: 700px;
+			border-collapse:collapse;
+			border:1px solid black;
 			}
-			table.data-table td {
-			width: 70px;
-			text-align:center;
+			table.data-table td, th {
+			width: 100px;
+			border: 1px solid black;
+			}
+			.leftie{
+				text-align: left !important;
+			}
+			.right{
+				text-align: right !important;
+			}
+			.center{
+				text-align: center !important;
 			}
 			</style> 
 			";
@@ -156,22 +167,22 @@ class Cold_Chain extends MY_Controller {
 		foreach ($all_vaccines as $vaccine) {
 			$data_buffer .= "<tr><td style='text-align: left;'>" . $vaccine -> Name . "</td>";
 			if (isset($fridge_capacities[$vaccine -> id])) {
-				$data_buffer .= "<td>" . $fridge_stock[$vaccine -> id] . "</td><td>" . $fridge_capacities[$vaccine -> id] . "</td><td>N/A</td>";
+				$data_buffer .= "<td class='right'>" . number_format($fridge_stock[$vaccine -> id] + 0) . "</td><td  class='right'>" . number_format($fridge_capacities[$vaccine -> id] + 0) . "</td><td  class='right'>N/A</td>";
 				$fridge_totals += $fridge_capacities[$vaccine -> id];
 			}
 			if (isset($freezer_capacities[$vaccine -> id])) {
-				$data_buffer .= "<td>" . $freezer_stock[$vaccine -> id] . "</td><td>N/A</td><td>" . $freezer_capacities[$vaccine -> id] . "</td>";
+				$data_buffer .= "<td  class='right'>" . number_format($freezer_stock[$vaccine -> id] + 0) . "</td><td  class='right'>N/A</td><td  class='right'>" . number_format($freezer_capacities[$vaccine -> id] + 0) . "</td>";
 				$freezer_totals += $freezer_capacities[$vaccine -> id];
 			}
 
 			$data_buffer .= "</tr>";
 		}
-		$data_buffer .= "<tr><td style='text-align: left;'>Totals</td><td>-</td><td>" . $fridge_totals . "</td><td>" . $freezer_totals . "</td></tr>";
+		$data_buffer .= "<tr><td style='text-align: left;'>Totals</td><td>-</td><td class='right'>" . number_format($fridge_totals + 0) . "</td><td class='right'>" . number_format($freezer_totals + 0) . "</td></tr>";
 		$data_buffer .= "</table>";
-		$data_buffer .= "<table class='data-table' style='margin-top:50px;'><tr><th>At a Glance</th><th>(+2 to +8)</th><th>(-15 to -25)</th></tr>";
-		$data_buffer .= "<tr><td style='text-align: left;'>Total Net Volume (Litres)</th><td>".number_format($fridge_capacity,2)."</td><td>".number_format($freezer_capacity,2)."</td></tr>";
-		$data_buffer .= "<tr><td style='text-align: left;'>Total Occupied Capacity (Litres)</td><td>".number_format(($fridge_capacity - $total_net_volume_4deg),2)."</td><td>".number_format(($freezer_capacity - $total_net_volume_minus_20deg),2)."</td></tr>";
-		$data_buffer .= "<tr><td style='text-align: left;'>Available Capacity (Litres)</td><td>".number_format($total_net_volume_4deg,2)."</td><td>".number_format($total_net_volume_minus_20deg,2)."</td></tr></table>";
+		$data_buffer .= "<table class='data-table' style='margin-top:50px;'><tr><th>Statistic</th><th>(+2 to +8)</th><th>(-15 to -25)</th></tr>";
+		$data_buffer .= "<tr><td style='text-align: left;'>Total Net Volume (Litres)</th><td  class='right'>" . number_format($fridge_capacity, 2) . "</td><td  class='right'>" . number_format($freezer_capacity, 2) . "</td></tr>";
+		$data_buffer .= "<tr><td style='text-align: left;'>Total Occupied Capacity (Litres)</td><td  class='right'>" . number_format(($fridge_capacity - $total_net_volume_4deg), 2) . "</td><td  class='right'>" . number_format(($freezer_capacity - $total_net_volume_minus_20deg), 2) . "</td></tr>";
+		$data_buffer .= "<tr><td style='text-align: left;'>Available Capacity (Litres)</td><td  class='right'>" . number_format($total_net_volume_4deg, 2) . "</td><td  class='right'>" . number_format($total_net_volume_minus_20deg, 2) . "</td></tr></table>";
 		$this -> generatePDF($data_buffer);
 		//echo $data_buffer;
 	}
@@ -216,7 +227,7 @@ class Cold_Chain extends MY_Controller {
 		}
 		$percentage_occupied = (number_format(($occupied_capacity / $total_net_volume_4deg), 3) * 100);
 		$freezer_percentage_occupied = (number_format(($freezer_occupied_capacity / $total_net_volume_minus_20deg), 3) * 100);
-		echo '<chart bgColor="FFFFFF" showBorder="0" showCanvasBase="1"  cylRadius="20" upperLimit="100" lowerLimit="0" tickMarkGap="5" numberSuffix="%" caption="% of Fridge Occupied">
+		echo '<chart bgColor="FFFFFF" showBorder="0" showCanvasBase="1"  cylRadius="20" upperLimit="100" lowerLimit="0" tickMarkGap="5" numberSuffix="%" caption="Fridge Occupied">
 <value>' . $percentage_occupied . '</value>
 <annotations>
 <annotationGroup>
@@ -230,6 +241,7 @@ class Cold_Chain extends MY_Controller {
 <annotation type="text" label="Capacity of +2 to +8 Occupied" font="Verdana" xPos="115" yPos="75" align="left" vAlign="left" fontcolor="333333" fontSize="10" isBold="1"/>
 <annotation type="text" label="(expressed as a % of the total)" font="Verdana" xPos="114" yPos="90" align="left" vAlign="left" fontcolor="333333" fontSize="10"/>
 <annotation type="text" label="Occupied: ' . $occupied_capacity . '/' . $total_net_volume_4deg . '" font="Verdana" xPos="115" yPos="105" align="left" vAlign="left" fontcolor="333333" fontSize="10" isbold="1"/>
+<annotation type="text" label="Fridge" font="Verdana" xPos="10" yPos="285" align="left" vAlign="left" fontcolor="333333" fontSize="10"/>
 </annotationGroup>
 <annotationGroup>
 <annotation type="rectangle" xPos="100" yPos="0" toXPos="300" toYPos="60" radius="0" fillcolor="333333" fillAlpha="5"/>
@@ -243,11 +255,13 @@ class Cold_Chain extends MY_Controller {
 <annotation type="text" label="(expressed as a % of the total)" font="Verdana" xPos="114" yPos="20" align="left" vAlign="left" fontcolor="333333" fontSize="10"/>
 <annotation type="text" label="Occupied: ' . $freezer_occupied_capacity . '/' . $total_net_volume_minus_20deg . '" font="Verdana" xPos="115" yPos="35" align="left" vAlign="left" fontcolor="333333" fontSize="10" isbold="1"/>
 </annotationGroup>
+
 </annotations>
 </chart>
 
 ';
 	}
+
 	public function get_national_freezer_occupancy() {
 		$freezer_vaccines = Fridge_Compartments::getCompartmentVaccines("freezer");
 		$freezer_capacities = array();
@@ -272,6 +286,12 @@ class Cold_Chain extends MY_Controller {
 		$percentage_occupied = (number_format(($occupied_capacity / $total_net_volume_minus_20deg), 3) * 100);
 		echo '<chart bgColor="FFFFFF" showBorder="0" showCanvasBase="1"  cylRadius="20" upperLimit="100" lowerLimit="0" tickMarkGap="5" numberSuffix="%" caption="% of Fridge Occupied">
 <value>' . $percentage_occupied . '</value>
+<annotations>
+<annotationGroup>
+<annotation type="text" label="Freezer" font="Verdana" xPos="10" yPos="285" align="left" vAlign="left" fontcolor="333333" fontSize="10"/>
+</annotationGroup>
+
+</annotations>
 </chart>';
 	}
 
@@ -282,7 +302,7 @@ class Cold_Chain extends MY_Controller {
 	function generatePDF($data) {
 		$html_title = "<img src='Images/coat_of_arms-resized.png' style='position:absolute; width:96px; height:92px; top:0px; left:0px; '></img>";
 		$html_title .= "<h3 style='text-align:center; text-decoration:underline; margin-top:-50px;'>Antigen Cold Chain Occupation</h3>";
-		$date = date('d/m/Y');
+		$date = date('d-M-Y');
 		$html_title .= "<h5 style='text-align:center;'> as at: " . $date . "</h5>";
 
 		$this -> load -> library('mpdf');

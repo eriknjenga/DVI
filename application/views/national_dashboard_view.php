@@ -255,7 +255,7 @@
 	<div style="float:left; padding:5px;"><b>Sufficient: </b> Vaccine will be above safety level at next shipment date. Monitor stock levels</div></div>
 	<div class="legend_content">
 	<div style="width:20px; height:20px; background-color: #B6E3E3;float:left"></div>
-	<div style="float:left; padding:5px;"><b>Current Stock: </b> Current MoS held at the store</div></div>
+	<div style="float:left; padding:5px;"><b>Required Stock: </b> MoS Needed Untill Next Shipment</div></div>
 
 </div>
 </div>

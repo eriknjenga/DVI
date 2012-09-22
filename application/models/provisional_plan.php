@@ -27,7 +27,7 @@ class Provisional_Plan extends Doctrine_Record {
 	}
 
 	public static function getNextDelivery($vaccine) {
-		$query = Doctrine_Query::create() -> select("datediff(str_to_date(expected_date,'%m/%d/%Y'),now()) as difference,date_format(str_to_date(expected_date,'%m/%d/%Y'),'%d/%m/%Y') as next_shipment") -> from("Provisional_Plan") -> where("vaccine = '$vaccine' and str_to_date(expected_date,'%m/%d/%Y') >= now()")->orderBy("str_to_date(expected_date,'%m/%d/%Y') asc")->limit('1');
+		$query = Doctrine_Query::create() -> select("datediff(str_to_date(expected_date,'%m/%d/%Y'),now()) as difference,date_format(str_to_date(expected_date,'%m/%d/%Y'),'%d-%b-%Y') as next_shipment") -> from("Provisional_Plan") -> where("vaccine = '$vaccine' and str_to_date(expected_date,'%m/%d/%Y') >= now()")->orderBy("str_to_date(expected_date,'%m/%d/%Y') asc")->limit('1');
 		$plans = $query -> execute(array(), Doctrine::HYDRATE_ARRAY);
 		return $plans;
 	}
