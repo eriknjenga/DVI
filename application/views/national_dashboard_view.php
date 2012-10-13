@@ -34,37 +34,37 @@
 			
 		//start with the mos graph
 		var chart = new FusionCharts("<?php echo base_url()."Scripts/FusionCharts/Charts/MSColumn2D.swf"?>", "ChartId", "460", "300", "0", "0");
-		var url = '<?php echo base_url()."months_of_stock/get_national_mos_balance/"?>'; 
+		var url = '<?php echo base_url()."months_of_stock/get_mos_balance/1/0/0"?>'; 
 		chart.setDataURL(url);
 		chart.render("mos_forecast");
 		//then the cold chain graph
 		var chart = new FusionCharts("<?php echo base_url()."Scripts/FusionCharts/Charts/StackedBar2D.swf"?>", "ChartId", "370", "300", "0", "0");
-		var url = '<?php echo base_url()."cold_chain/get_national_utilization/"?>'; 
+		var url = '<?php echo base_url()."cold_chain/get_utilization/1/0/0"?>'; 
 		chart.setDataURL(url);
 		chart.render("cold_chain");
 		//get the % occupied in the fridge
 		var chart = new FusionCharts("<?php echo base_url()."Scripts/FusionWidgets/Charts/Cylinder.swf"?>", "ChartId", "310", "300", "0", "0"); 
-		var url = '<?php echo base_url()."cold_chain/get_national_fridge_occupancy/"?>'; 
+		var url = '<?php echo base_url()."cold_chain/get_fridge_occupancy/1/0/0"?>'; 
 		chart.setDataURL(url);
 		chart.render("fridge_occupancy");
 		//get the % occupied in the fridge
 		var chart = new FusionCharts("<?php echo base_url()."Scripts/FusionWidgets/Charts/Cylinder.swf"?>", "ChartId", "100", "300", "0", "0"); 
-		var url = '<?php echo base_url()."cold_chain/get_national_freezer_occupancy/"?>'; 
+		var url = '<?php echo base_url()."cold_chain/get_freezer_occupancy/1/0/0"?>';  
 		chart.setDataURL(url);
 		chart.render("freezer_occupancy");
 		//get the trend of mos for different antigens
 		var chart = new FusionCharts("<?php echo base_url()."Scripts/FusionCharts/Charts/MSLine.swf"?>", "ChartId", "400", "300", "0", "0"); 
-		var url = '<?php echo base_url()."mos_trend/get/2/0/0/0"?>'; 
+		var url = '<?php echo base_url()."mos_trend/get/0/0/1/0/0"?>';  
 		chart.setDataURL(url);
 		chart.render("mos_trend");
 		//get the consumption vs. forecast for various vaccines
 		var chart = new FusionCharts("<?php echo base_url()."Scripts/FusionCharts/Charts/Column2D.swf"?>", "ChartId", "400", "300", "0", "0"); 
-		var url = '<?php echo base_url()."consumption_forecast/national_forecast/0"?>'; 
+		var url = '<?php echo base_url()."consumption_forecast/forecast/0/1/0/0"?>'; 
 		chart.setDataURL(url);
 		chart.render("forecast");
 		//get the distribution graph
 		var chart = new FusionCharts("<?php echo base_url()."Scripts/FusionCharts/Charts/Scatter.swf"?>", "ChartId", "400", "300", "0", "0"); 
-		var url = '<?php echo base_url()."antigen_recipients/national_recipients/0/0/0"?>'; 
+		var url = '<?php echo base_url()."antigen_recipients/recipients/0/0/0/1/0/0"?>'; 
 		chart.setDataURL(url);
 		chart.render("stock_distribution");
 		
@@ -72,9 +72,10 @@
 			var id  = $(this).attr("id"); 
 			
 			if(id == "mos_graph"){
-				$("#mos_larger_graph_container").dialog("open");
+				$("#mos_larger_graph_container").dialog({title: "MoS Available Vs. MoS Required"});
+				$("#mos_larger_graph_container").dialog("open"); 
 				var chart = new FusionCharts("<?php echo base_url()."Scripts/FusionCharts/Charts/MSColumn2D.swf"?>", "ChartId", "900", "450", "0", "0");
-				var url = '<?php echo base_url()."months_of_stock/get_national_mos_balance/"?>'; 
+				var url = '<?php echo base_url()."months_of_stock/get_mos_balance/1/0/0"?>'; 
 				chart.setDataURL(url);
 				chart.render("mos_larger_graph");
 			}
@@ -82,7 +83,7 @@
 				$("#larger_graph_container").dialog({title: "National Cold Chain Utilization"});
 				$("#larger_graph_container").dialog("open");
 				var chart = new FusionCharts("<?php echo base_url()."Scripts/FusionCharts/Charts/StackedBar2D.swf"?>", "ChartId", "900", "450", "0", "0");	
-				var url = '<?php echo base_url()."cold_chain/get_national_utilization/"?>'; 
+				var url = '<?php echo base_url()."cold_chain/get_utilization/1/0/0"?>'; 
 				chart.setDataURL(url);
 				chart.render("larger_graph_container");
 			}
@@ -90,7 +91,7 @@
 				$("#mos_trend_larger_graph_container").dialog('option', 'title', 'Antigen MOS Balance Trend');
 				$("#mos_trend_larger_graph_container").dialog("open");
 				var chart = new FusionCharts("<?php echo base_url()."Scripts/FusionCharts/Charts/MSLine.swf"?>", "ChartId", "900", "450", "0", "0");	
-				var url = '<?php echo base_url()."mos_trend/get/2/0/0/0"?>'; 
+				var url = '<?php echo base_url()."mos_trend/get/0/0/1/0/0"?>';   
 				chart.setDataURL(url);
 				chart.render("mos_trend_larger_graph");
 			}
@@ -98,7 +99,7 @@
 				$("#forecast_larger_graph_container").dialog('option', 'title', 'Antigen Consumption Vs. Forecast');
 				$("#forecast_larger_graph_container").dialog("open");
 				var chart = new FusionCharts("<?php echo base_url()."Scripts/FusionCharts/Charts/Column2D.swf"?>", "ChartId", "900", "450", "0", "0"); 
-				var url = '<?php echo base_url()."consumption_forecast/national_forecast/0"?>'; 
+				var url = '<?php echo base_url()."consumption_forecast/forecast/0/1/0/0"?>';  
 				chart.setDataURL(url);
 				chart.render("forecast_larger_graph");
 			}
@@ -106,7 +107,7 @@
 				$("#recipients_larger_graph_container").dialog({title: "National Antigen Recipients Distribution"});
 				$("#recipients_larger_graph_container").dialog("open");
 				var chart = new FusionCharts("<?php echo base_url()."Scripts/FusionCharts/Charts/Scatter.swf"?>", "ChartId", "900", "450", "0", "0"); 
-				var url = '<?php echo base_url()."antigen_recipients/national_recipients/0/0/0"?>'; 
+				var url = '<?php echo base_url()."antigen_recipients/recipients/0/0/0/1/0/0"?>'; 
 				chart.setDataURL(url);
 				chart.render("recipients_larger_graph");
 			}
@@ -121,12 +122,12 @@
 				});
 				var selected_year = $("#mos_trend_year").find(":selected").attr("value");
 				//Modify the link that downloads more data
-				var data_url = '<?php echo base_url();?>mos_trend/download_national_mos_trend/'+selected_year;
+				var data_url = '<?php echo base_url();?>mos_trend/download_mos_trend/'+selected_year+'/1/0/0'; 
 				$("#trend_data_download").attr("href",data_url);
 				$("#mos_trend_larger_graph_container").dialog('option', 'title', 'Antigen MOS Balance Trend');
 				$("#mos_trend_larger_graph_container").dialog("open");
 				var chart = new FusionCharts("<?php echo base_url()."Scripts/FusionCharts/Charts/MSLine.swf"?>", "ChartId", "900", "450", "0", "0");	
-				var url = '<?php echo base_url()?>mos_trend/get/2/0/'+vaccine_string+'/'+selected_year+''; 
+				var url = '<?php echo base_url();?>mos_trend/get/'+vaccine_string+'/'+selected_year+'/1/0/0'; 
 				chart.setDataURL(url);
 				chart.render("mos_trend_larger_graph");
 		});
@@ -194,7 +195,7 @@
 
 <div class="graph">
 <div class="larger_graph">
-	<a class="link view_larger_graph" href="#" id="mos_graph">Enlarge</a> | <a class="link" href="<?php echo base_url();?>months_of_stock/download_national">Download Data</a>
+	<a class="link view_larger_graph" href="#" id="mos_graph">Enlarge</a> | <a class="link" href="<?php echo base_url().'months_of_stock/download/1/0/0';?>">Download Data</a>
 </div>
 <div id="mos_legend">
 	<div style="width:20px; height:20px; background-color: #E60000;float:left"></div>
@@ -208,7 +209,7 @@
 </div>
 <div class="graph" style="width: 370px;">
 <div class="larger_graph">
-	<a class="link view_larger_graph" id="cold_chain_graph">Enlarge</a> | <a class="link" href="<?php echo base_url();?>cold_chain/download_national">Download Data</a>
+	<a class="link view_larger_graph" id="cold_chain_graph">Enlarge</a> |<a class="link" href="<?php echo base_url().'cold_chain/download/1/0/0';?>">Download Data</a>
 </div>
 <div id = "cold_chain" title="Cold Chain Utilization"  style="margin-top: 30px;"></div>
 </div>
@@ -217,13 +218,13 @@
 </div>
 <div class="graph" style="width: 100px; margin-top: -5px; margin-left: -10px;">
 <div class="larger_graph">
-<a class="link" href="<?php echo base_url();?>cold_chain/download_national">Download Data</a>
+<a class="link" href="<?php echo base_url().'cold_chain/download/1/0/0';?>">Download Data</a>
 </div>
 <div id = "freezer_occupancy" title="Fridge Occupancy"></div>
 </div>
 <div class="graph" style="width: 350px; margin-left: 50px;">
 <div class="larger_graph" style="margin-top: -20px;">
-	<a class="link view_larger_graph" id="mos_trend_graph">View More</a> | <a class="link" href="<?php echo base_url();?>mos_trend/download_national_mos_trend">Download Data</a>
+	<a class="link view_larger_graph" id="mos_trend_graph">View More</a> | <a class="link" href="<?php echo base_url().'mos_trend/download_mos_trend/0/1/0/0';?>">Download Data</a>
 </div>
 <div id = "mos_trend" title="Antigen MOS Trend"  style="margin-top: 0px;"></div>
 </div>
@@ -246,16 +247,16 @@
 <div id="mos_detailed_legend">
 	<div class="legend_content">
 	<div style="width:20px; height:20px; background-color: #E60000;float:left"></div>
-	<div style="float:left; padding:5px;"><b>Order Now: </b> Vaccine will not last till next scheduled shipment. Place order immediately to avoid stock out</div></div>
+	<div style="float:left; padding:5px;"><b>Order Now: </b> Vaccine will not last untill th next scheduled shipment. Place order immediately to avoid stock out</div></div>
 		<div class="legend_content">
 	<div style="width:20px; height:20px; background-color: #F6BD0F;float:left"></div>
 	<div style="float:left; padding:5px;"><b>Order Soon: </b> Vaccine will be below the safety level by next scheduled shipment. Order soon or reschedule shipment</div></div>
 	<div class="legend_content">
 	<div style="width:20px; height:20px; background-color: #3DE600;float:left"></div>
-	<div style="float:left; padding:5px;"><b>Sufficient: </b> Vaccine will be above safety level at next shipment date. Monitor stock levels</div></div>
+	<div style="float:left; padding:5px;"><b>Sufficient: </b> Vaccine will last untill the next shipment date. Monitor stock levels</div></div>
 	<div class="legend_content">
 	<div style="width:20px; height:20px; background-color: #B6E3E3;float:left"></div>
-	<div style="float:left; padding:5px;"><b>Required Stock: </b> MoS Needed Untill Next Shipment</div></div>
+	<div style="float:left; padding:5px;"><b>Available Stock: </b> Current MoS Available</div></div>
 
 </div>
 </div>

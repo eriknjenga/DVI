@@ -7,7 +7,7 @@ class Consumption_Forecast extends MY_Controller {
 		parent::__construct();
 	}
 
-	public function national_forecast($vaccine = 0, $year = "0") {
+	public function forecast($vaccine = 0, $year = "0", $national = "", $region = "", $district = "") {
 		if ($year == "0") {
 			$year = date('Y');
 		}
@@ -28,25 +28,42 @@ class Consumption_Forecast extends MY_Controller {
 
 		//Set the maximum value
 		$max_value = 0;
+		$population = 0;
 		//Get the consumption for each of the quarters
-		$quarter_one_consumption = Disbursements::getNationalIssuesTotals($vaccine_object -> id, $quarter_one_start, $quarter_one_end);
+		if ($national > 0) {
+			$population = regional_populations::getNationalPopulation($year);
+			$quarter_one_consumption = Disbursements::getNationalIssuesTotals($vaccine_object -> id, $quarter_one_start, $quarter_one_end);
+			$quarter_two_consumption = Disbursements::getNationalIssuesTotals($vaccine_object -> id, $quarter_two_start, $quarter_two_end);
+			$quarter_three_consumption = Disbursements::getNationalIssuesTotals($vaccine_object -> id, $quarter_three_start, $quarter_three_end);
+			$quarter_four_consumption = Disbursements::getNationalIssuesTotals($vaccine_object -> id, $quarter_four_start, $quarter_four_end);
+		}
+		if ($region > 0) {
+			$population = Regional_Populations::getRegionalPopulation($region, $year);
+			$quarter_one_consumption = Disbursements::getRegionalIssuesTotals($region,$vaccine_object -> id, $quarter_one_start, $quarter_one_end);
+			$quarter_two_consumption = Disbursements::getRegionalIssuesTotals($region,$vaccine_object -> id, $quarter_two_start, $quarter_two_end);
+			$quarter_three_consumption = Disbursements::getRegionalIssuesTotals($region,$vaccine_object -> id, $quarter_three_start, $quarter_three_end);
+			$quarter_four_consumption = Disbursements::getRegionalIssuesTotals($region,$vaccine_object -> id, $quarter_four_start, $quarter_four_end);
+		}
+		if ($district > 0) {
+			$population = District_Populations::getDistrictPopulation($district, $year);
+			$quarter_one_consumption = Disbursements::getDistrictIssuesTotals($district,$vaccine_object -> id, $quarter_one_start, $quarter_one_end);
+			$quarter_two_consumption = Disbursements::getDistrictIssuesTotals($district,$vaccine_object -> id, $quarter_two_start, $quarter_two_end);
+			$quarter_three_consumption = Disbursements::getDistrictIssuesTotals($district,$vaccine_object -> id, $quarter_three_start, $quarter_three_end);
+			$quarter_four_consumption = Disbursements::getDistrictIssuesTotals($district,$vaccine_object -> id, $quarter_four_start, $quarter_four_end);
+		}
+ 
 		if ($quarter_one_consumption > $max_value) {
 			$max_value = $quarter_one_consumption;
-		}
-		$quarter_two_consumption = Disbursements::getNationalIssuesTotals($vaccine_object -> id, $quarter_two_start, $quarter_two_end);
+		} 
 		if ($quarter_two_consumption > $max_value) {
 			$max_value = $quarter_two_consumption;
-		}
-		$quarter_three_consumption = Disbursements::getNationalIssuesTotals($vaccine_object -> id, $quarter_three_start, $quarter_three_end);
+		} 
 		if ($quarter_three_consumption > $max_value) {
 			$max_value = $quarter_three_consumption;
-		}
-		$quarter_four_consumption = Disbursements::getNationalIssuesTotals($vaccine_object -> id, $quarter_four_start, $quarter_four_end);
+		} 
 		if ($quarter_four_consumption > $max_value) {
 			$max_value = $quarter_four_consumption;
-		}
-		//Get the national population
-		$population = regional_populations::getNationalPopulation($year);
+		} 
 		$population = str_replace(",", "", $population);
 		//Get the monthly requirement
 		$monthly_requirement = ceil(($vaccine_object -> Doses_Required * $population * $vaccine_object -> Wastage_Factor) / 12);
@@ -128,7 +145,7 @@ class Consumption_Forecast extends MY_Controller {
 			$data_buffer .= "<tr><td class='leftie'>" . $vaccine_object -> Name . "</td><td class='right'>" . number_format($quarterly_consumption) . "</td><td class='right'>" . number_format($quarter_one_consumption) . "</td><td class='right'>" . number_format($quarterly_consumption - $quarter_one_consumption) . "</td><td class='right'>" . number_format($quarter_two_consumption) . "</td><td class='right'>" . number_format($quarterly_consumption - $quarter_two_consumption) . "</td><td class='right'>" . number_format($quarter_three_consumption) . "</td><td class='right'>" . number_format($quarterly_consumption - $quarter_three_consumption) . "</td><td class='right'>" . number_format($quarter_four_consumption) . "</td><td class='right'>" . number_format($quarterly_consumption - $quarter_four_consumption) . "</td></tr>";
 		}
 		$data_buffer .= "</table>";
-		$this -> generatePDF($data_buffer,$year);
+		$this -> generatePDF($data_buffer, $year);
 		//echo $data_buffer;
 	}
 
@@ -138,16 +155,16 @@ class Consumption_Forecast extends MY_Controller {
 		return $title;
 	}
 
-	function generatePDF($data,$year) {
+	function generatePDF($data, $year) {
 		$html_title = "<img src='Images/coat_of_arms-resized.png' style='position:absolute; width:96px; height:92px; top:0px; left:0px; '></img>";
 		$html_title .= "<h3 style='text-align:center; text-decoration:underline; margin-top:-50px;'>Antigen Consumption Vs. Forecast</h3>";
 		$date = date('d-M-Y');
-		$html_title .= "<h5 style='text-align:center;'>for the year: ".$year." as at: " . $date . "</h5>";
+		$html_title .= "<h5 style='text-align:center;'>for the year: " . $year . " as at: " . $date . "</h5>";
 
 		$this -> load -> library('mpdf');
 		$this -> mpdf = new mPDF('c', 'A4');
 		$this -> mpdf -> SetTitle('Vaccine Consumption Vs. Forecast');
-		
+
 		$this -> mpdf -> simpleTables = true;
 		$this -> mpdf -> defaultfooterfontsize = 9;
 		/* blank, B, I, or BI */

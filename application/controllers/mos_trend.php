@@ -5,7 +5,18 @@ class MOS_Trend extends MY_Controller {
 
 	}
 
-	public function get($type, $id, $vaccine, $year = "") {
+	public function get($vaccine, $year = "", $national = "", $region = "", $district = "") {
+		if ($national > 0) {
+			$title = "MOS Available at Central Vaccine Store";
+		}
+		if ($region > 0) {
+			$region_object = Regions::getRegion($region);
+			$title = "MOS Available at " . $region_object -> name;
+		}
+		if ($district > 0) {
+			$district_object = Districts::getDistrict($district);
+			$title = "MOS Available at " . $district_object -> name . " District Store";
+		}
 		$monthly_opening_stocks = array();
 		$vaccine_objects = array();
 		if ($year == "0") {
@@ -28,81 +39,50 @@ class MOS_Trend extends MY_Controller {
 		$year_start = date("U", mktime(0, 0, 0, 1, 1, $year));
 
 		$counter = 2;
-		/*if ($type == 0) {
-		 //Regional Store
-		 $population = regional_populations::getRegionalPopulation($id, $year);
-		 $population = str_replace(",", "", $population);
-		 $monthly_requirement = ceil(($vaccine_object -> Doses_Required * $population * $vaccine_object -> Wastage_Factor) / 12);
-		 for ($month = 1; $month <= 36; $month++) {
-		 //Get the month
-		 $month_number = $counter / 3;
-		 //If it is an even number, get values for the 21st, if it's odd, get values for the 7th
-		 if ($month % 3 == 0) {
-		 $month_date = 7;
-		 } else if ($month % 3 == 1) {
-		 $month_date = 21;
-		 } else if ($month % 3 == 2) {
-		 $month_date = 28;
-		 }
-		 $to = date("U", mktime(0, 0, 0, $month_number, $month_date, $year));
-		 $monthly_opening_stocks[$month] = Disbursements::getRegionalPeriodBalance($id, $vaccine, $to);
-		 $counter += 3;
-		 }
-		 $upper_limit = $monthly_requirement * 4;
-		 $lower_limit = $monthly_requirement;
-		 } else if ($type == 1) {
-		 //District Store
-		 $population = district_populations::getDistrictPopulation($id, $year);
-		 $population = str_replace(",", "", $population);
-		 $monthly_requirement = ceil(($vaccine_object -> Doses_Required * $population * $vaccine_object -> Wastage_Factor) / 12);
-		 for ($month = 1; $month <= 36; $month++) {
-		 //Get the month
-		 $month_number = $counter / 2;
-		 //If it is an even number, get values for the 21st, if it's odd, get values for the 7th
-		 if ($month % 3 == 0) {
-		 $month_date = 7;
-		 } else if ($month % 3 == 1) {
-		 $month_date = 21;
-		 } else if ($month % 3 == 2) {
-		 $month_date = 28;
-		 }
-		 $to = date("U", mktime(0, 0, 0, $month_number, $month_date, $year));
-		 $monthly_opening_stocks[$month] = Disbursements::getDistrictPeriodBalance($id, $vaccine, $to);
-		 $counter += 2;
-		 }
-		 $upper_limit = $monthly_requirement * 2;
-		 $lower_limit = ceil($monthly_requirement / 2);
+		$population = 0;
 
-		 } else*/
-		if ($type == 2) {
-			//National Store
-			$population = regional_populations::getNationalPopulation($year);
-			$population = str_replace(",", "", $population);
+		if ($national > 0) {
+			$population = Regional_Populations::getNationalPopulation($year);
+		}
+		if ($region > 0) {
+			$population = Regional_Populations::getRegionalPopulation($region, $year);
+		}
+		if ($district > 0) {
+			$population = District_Populations::getDistrictPopulation($district, $year);
+		}
+		$population = str_replace(",", "", $population);
 
-			foreach ($vaccine_objects as $vaccine_object) {
-				$monthly_requirement = ceil(($vaccine_object -> Doses_Required * $population * $vaccine_object -> Wastage_Factor) / 12);
-				for ($month = 1; $month <= 36; $month++) {
-					$mos_balance = 0;
-					//Get the month
-					$month_number = ceil($month / 3);
-					//If it is an even number, get values for the 21st, if it's odd, get values for the 7th
-					if ($month % 3 == 0) {
-						$month_date = 28;
-					} else if ($month % 3 == 1) {
-						$month_date = 7;
-					} else if ($month % 3 == 2) {
-						$month_date = 21;
-					}
-					$to = date("U", mktime(0, 0, 0, $month_number, $month_date, $year));
-					$stock_balance = Disbursements::getNationalPeriodBalance($vaccine_object -> id, $to);
-					if ($stock_balance > 0) {
-						$mos_balance = number_format(($stock_balance / $monthly_requirement), 2);
-					}
-					$monthly_opening_stocks[$vaccine_object -> id][$month] = $mos_balance;
-					$counter += 2;
+		foreach ($vaccine_objects as $vaccine_object) {
+			$monthly_requirement = ceil(($vaccine_object -> Doses_Required * $population * $vaccine_object -> Wastage_Factor) / 12);
+			for ($month = 1; $month <= 36; $month++) {
+				$stock_balance = 0;
+				$mos_balance = 0;
+				//Get the month
+				$month_number = ceil($month / 3);
+				//If it is an even number, get values for the 21st, if it's odd, get values for the 7th
+				if ($month % 3 == 0) {
+					$month_date = 28;
+				} else if ($month % 3 == 1) {
+					$month_date = 7;
+				} else if ($month % 3 == 2) {
+					$month_date = 21;
 				}
+				$to = date("U", mktime(0, 0, 0, $month_number, $month_date, $year));
+				if ($national > 0) {
+					$stock_balance = Disbursements::getNationalPeriodBalance($vaccine_object -> id, $to);
+				}
+				if ($region > 0) {
+					$stock_balance = Disbursements::getRegionalPeriodBalance($region, $vaccine_object -> id, $to);
+				}
+				if ($district > 0) {
+					$stock_balance = Disbursements::getDistrictPeriodBalance($district, $vaccine_object -> id, $to);
+				}
+				if ($stock_balance > 0) {
+					$mos_balance = number_format(($stock_balance / $monthly_requirement), 2);
+				}
+				$monthly_opening_stocks[$vaccine_object -> id][$month] = $mos_balance;
+				$counter += 2;
 			}
-
 		}
 
 		$chart = '
@@ -145,10 +125,10 @@ class MOS_Trend extends MY_Controller {
 <category label=""/>
 <category label=""/>
 </categories> 
-<dataset seriesName="3 Months of Stock" color="269600" anchorBorderColor="269600" anchorBgColor="269600">';
+<dataset seriesName="2 Months of Stock (Ideal Stock Level)" color="269600" anchorBorderColor="269600" anchorBgColor="269600">';
 
 		for ($x = 1; $x <= 36; $x++) {
-			$chart .= '<set value="3"/>';
+			$chart .= '<set value="2"/>';
 		}
 
 		$chart .= '</dataset>';
@@ -210,14 +190,30 @@ class MOS_Trend extends MY_Controller {
 		echo $chart;
 	}
 
-	public function download_national_mos_trend($selected_year = 0) {
+	public function download_mos_trend($selected_year = 0, $national = "", $region = "", $district = "") {
 		$year = date('Y');
 		if ($selected_year != "0") {
 			$year = $selected_year;
 		}
+
 		$counter = 2;
 		$vaccine_objects = Vaccines::getAll();
-		$population = regional_populations::getNationalPopulation($year);
+		$population = 0;
+		$title = "";
+		if ($national > 0) {
+			$title = "MOS Balance Trend at Central Vaccine Store";
+			$population = Regional_Populations::getNationalPopulation($year);
+		}
+		if ($region > 0) {
+			$region_object = Regions::getRegion($region);
+			$title = "MOS Balance Trend at " . $region_object -> name;
+			$population = Regional_Populations::getRegionalPopulation($region, $year);
+		}
+		if ($district > 0) {
+			$district_object = Districts::getDistrict($district);
+			$title = "MOS Balance Trend at " . $district_object -> name . " District Store";
+			$population = District_Populations::getDistrictPopulation($district, $year);
+		}
 		$population = str_replace(",", "", $population);
 
 		foreach ($vaccine_objects as $vaccine_object) {
@@ -235,12 +231,21 @@ class MOS_Trend extends MY_Controller {
 					$month_date = 21;
 				}
 				$to = date("U", mktime(0, 0, 0, $month_number, $month_date, $year));
-				$stock_balance = Disbursements::getNationalPeriodBalance($vaccine_object -> id, $to);
+				$stock_balance = 0;
+				if ($national > 0) {
+					$stock_balance = Disbursements::getNationalPeriodBalance($vaccine_object -> id, $to);
+				}
+				if ($region > 0) {
+					$stock_balance = Disbursements::getRegionalPeriodBalance($region, $vaccine_object -> id, $to);
+				}
+				if ($district > 0) {
+					$stock_balance = Disbursements::getDistrictPeriodBalance($district, $vaccine_object -> id, $to);
+				}
 				//$stock_balance = 0;
 				if ($stock_balance > 0) {
 					$mos_balance = number_format(($stock_balance / $monthly_requirement), 2);
 				}
-				$monthly_opening_stocks[$month][$vaccine_object -> id]['stock_balance'] = number_format($stock_balance+0);
+				$monthly_opening_stocks[$month][$vaccine_object -> id]['stock_balance'] = number_format($stock_balance + 0);
 				$monthly_opening_stocks[$month][$vaccine_object -> id]['mos_balance'] = $mos_balance;
 				$counter += 2;
 			}
@@ -291,15 +296,15 @@ class MOS_Trend extends MY_Controller {
 			$counter += 2;
 		}
 		$data_buffer .= "</table>";
-		$this -> generatePDF($data_buffer,$year);
+		$this -> generatePDF($data_buffer, $year,$title);
 		//	var_dump($monthly_opening_stocks);
 	}
 
-	function generatePDF($data,$year) {
+	function generatePDF($data, $year,$title) {
 		$html_title = "<img src='Images/coat_of_arms-resized.png' style='position:absolute; width:96px; height:92px; top:0px; left:0px; '></img>";
-		$html_title .= "<h3 style='text-align:center; text-decoration:underline; margin-top:-50px;'>Antigen MOS Balance Trend</h3>";
+		$html_title .= "<h3 style='text-align:center; text-decoration:underline; margin-top:-50px;'>".$title."</h3>";
 		$date = date('d-M-Y');
-		$html_title .= "<h5 style='text-align:center;'> for the year: ".$year." as at: " . $date . "</h5>";
+		$html_title .= "<h5 style='text-align:center;'> for the year: " . $year . " as at: " . $date . "</h5>";
 
 		$this -> load -> library('mpdf');
 		$this -> mpdf = new mPDF('c', 'A4-L');
