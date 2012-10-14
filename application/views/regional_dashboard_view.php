@@ -59,12 +59,12 @@
 		chart.render("mos_trend");
 		//get the consumption vs. forecast for various vaccines
 		var chart = new FusionCharts("<?php echo base_url()."Scripts/FusionCharts/Charts/Column2D.swf"?>", "ChartId", "400", "300", "0", "0"); 
-		var url = '<?php echo base_url()."consumption_forecast/forecast/0/0/".$this -> session -> userdata('district_province_id')."/0"?>'; 
+		var url = '<?php echo base_url()."consumption_forecast/forecast/0/0/0/".$this -> session -> userdata('district_province_id')."/0"?>'; 
 		chart.setDataURL(url);
 		chart.render("forecast");
 		//get the distribution graph
-		var chart = new FusionCharts("<?php echo base_url()."Scripts/FusionCharts/Charts/Scatter.swf"?>", "ChartId", "400", "300", "0", "0"); 
-		var url = '<?php echo base_url()."antigen_recipients/national_recipients/0/0/0"?>'; 
+		var chart = new FusionCharts("<?php echo base_url()."Scripts/FusionCharts/Charts/Scatter.swf"?>", "ChartId", "400", "300", "0", "0");  
+		var url = '<?php echo base_url()."antigen_recipients/recipients/0/0/0/0/".$this -> session -> userdata('district_province_id')."/0"?>'; 
 		chart.setDataURL(url);
 		chart.render("stock_distribution");
 		
@@ -99,7 +99,7 @@
 				$("#forecast_larger_graph_container").dialog('option', 'title', 'Antigen Consumption Vs. Forecast');
 				$("#forecast_larger_graph_container").dialog("open");
 				var chart = new FusionCharts("<?php echo base_url()."Scripts/FusionCharts/Charts/Column2D.swf"?>", "ChartId", "900", "450", "0", "0"); 
-				var url = '<?php echo base_url()."consumption_forecast/national_forecast/0"?>'; 
+				var url = '<?php echo base_url()."consumption_forecast/forecast/0/0/0/".$this -> session -> userdata('district_province_id')."/0"?>'; 
 				chart.setDataURL(url);
 				chart.render("forecast_larger_graph");
 			}
@@ -107,7 +107,7 @@
 				$("#recipients_larger_graph_container").dialog({title: "National Antigen Recipients Distribution"});
 				$("#recipients_larger_graph_container").dialog("open");
 				var chart = new FusionCharts("<?php echo base_url()."Scripts/FusionCharts/Charts/Scatter.swf"?>", "ChartId", "900", "450", "0", "0"); 
-				var url = '<?php echo base_url()."antigen_recipients/national_recipients/0/0/0"?>'; 
+				var url = '<?php echo base_url()."antigen_recipients/recipients/0/0/0/0/".$this -> session -> userdata('district_province_id')."/0"?>'; 
 				chart.setDataURL(url);
 				chart.render("recipients_larger_graph");
 			}
@@ -133,26 +133,27 @@
 		});
 		$("#refresh_forecast_graph").click(function(){
 				var selected_vaccine = $("#forecast_vaccine").find(":selected").attr("value");
-				var selected_year = $("#forecast_year").find(":selected").attr("value");
-				var data_url = '<?php echo base_url();?>consumption_forecast/download_national_forecast/'+selected_year;
+				var selected_year = $("#forecast_year").find(":selected").attr("value"); 
+				var data_url = '<?php echo base_url();?>consumption_forecast/download_forecast/'+selected_vaccine+'/'+selected_year+'/0/<?php echo $this -> session -> userdata('district_province_id')."/0"?>';
 				$("#forecast_data_download").attr("href",data_url);
 				$("#forecast_larger_graph_container").dialog('option', 'title', 'Antigen Consumption Vs. Forecast');
 				$("#forecast_larger_graph_container").dialog("open"); 
-				var chart = new FusionCharts("<?php echo base_url()."Scripts/FusionCharts/Charts/Column2D.swf"?>", "ChartId", "900", "450", "0", "0");  
-				var url = '<?php echo base_url()?>consumption_forecast/national_forecast/'+selected_vaccine+'/'+selected_year; 
+				var chart = new FusionCharts("<?php echo base_url()."Scripts/FusionCharts/Charts/Column2D.swf"?>", "ChartId", "900", "450", "0", "0");   
+				var url = '<?php echo base_url()?>consumption_forecast/forecast/'+selected_vaccine+'/'+selected_year+'/0/<?php echo $this -> session -> userdata('district_province_id')."/0"?>'; 
 				chart.setDataURL(url);
 				chart.render("forecast_larger_graph");
 		});
 		$("#refresh_recipients_graph").click(function(){
 				var selected_vaccine = $("#issued_vaccine").find(":selected").attr("value");
 				var selected_quarter = $("#issued_quarter").find(":selected").attr("value");
-				var selected_year = $("#distribution_year").find(":selected").attr("value");
-				var data_url = '<?php echo base_url();?>antigen_recipients/download_national_recipients/'+selected_year+'/'+selected_quarter;
+				var selected_year = $("#distribution_year").find(":selected").attr("value");  
+				var data_url = '<?php echo base_url();?>antigen_recipients/download_recipients/'+selected_year+'/'+selected_quarter+"/0/<?php echo $this -> session -> userdata('district_province_id')."/0"?>";
 				$("#recipients_data_download").attr("href",data_url);
 				$("#recipients_larger_graph_container").dialog({title: "National Antigen Recipients Distribution"});
 				$("#recipients_larger_graph_container").dialog("open");
 				var chart = new FusionCharts("<?php echo base_url()."Scripts/FusionCharts/Charts/Scatter.swf"?>", "ChartId", "900", "450", "0", "0"); 
 				var url = '<?php echo base_url();?>antigen_recipients/national_recipients/'+selected_vaccine+'/'+selected_year+'/'+selected_quarter+''; 
+				var url = '<?php echo base_url();?>antigen_recipients/recipients/'+selected_vaccine+'/'+selected_year+'/'+selected_quarter+'/0/<?php echo $this -> session -> userdata('district_province_id')."/0"?>';  
 				chart.setDataURL(url);
 				chart.render("recipients_larger_graph");
 		});
@@ -230,13 +231,13 @@
 </div>
 <div class="graph" style="width: 350px; margin-left: 50px;">
 <div class="larger_graph" style="margin-top: -20px;">
-	<a class="link view_larger_graph" id="forecast_graph">View More</a> | <a class="link" href="<?php echo base_url();?>consumption_forecast/download_national_forecast">Download Data</a>
+	<a class="link view_larger_graph" id="forecast_graph">View More</a> |<a class="link" href="<?php echo base_url().'consumption_forecast/download_forecast/0/0/0/'.$this -> session -> userdata('district_province_id').'/0';?>">Download Data</a>
 </div>
 <div id = "forecast" title="Antigen Consumption vs. Forecast"  style="margin-top: 0px;"></div>
 </div>
 <div class="graph" style="width: 350px; margin-left: 50px;">
 <div class="larger_graph" style="margin-top: -20px;">
-	<a class="link view_larger_graph" id="recipients_graph">View More</a> | <a class="link" href="<?php echo base_url();?>antigen_recipients/download_national_recipients">Download Data</a>
+	<a class="link view_larger_graph" id="recipients_graph">View More</a> |<a class="link" href="<?php echo base_url().'antigen_recipients/download_recipients/0/0/0/'.$this -> session -> userdata('district_province_id').'/0';?>">Download Data</a>
 </div>
 <div id = "stock_distribution" title="District Stock Distribution"  style="margin-top: 0px;"></div>
 </div>

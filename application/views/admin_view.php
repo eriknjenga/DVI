@@ -31,7 +31,8 @@ border-bottom: 1px solid #DDD;
 <a href="<?php echo site_url("district_management");?>" class="quick_menu_link <?php if($quick_link == "district_management"){echo "quick_menu_active";}?>">Districts</a>
 <a href="<?php echo site_url("region_management");?>" class="quick_menu_link <?php if($quick_link == "region_management"){echo "quick_menu_active";}?>">Regions</a> 
 <a href="<?php echo site_url("facility_management/whole_list");?>" class="quick_menu_link <?php if($quick_link == "facility_management"){echo "quick_menu_active";}?>">Facilities</a> 
-<a href="<?php echo site_url("fridge_management/listing");?>" class="quick_menu_link <?php if($quick_link == "fridge_management"){echo "quick_menu_active";}?>">Fridges</a> 
+<a href="<?php echo site_url("fridge_management/listing");?>" class="quick_menu_link <?php if($quick_link == "fridge_management"){echo "quick_menu_active";}?>">Fridges</a>
+<a href="<?php echo site_url("vaccination_management/upload");?>" class="quick_menu_link <?php if($quick_link == "vaccination_management"){echo "quick_menu_active";}?>">DHIS Data Upload</a>  
  
 </div>
 <?php 

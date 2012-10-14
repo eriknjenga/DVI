@@ -7,7 +7,7 @@ class Antigen_Recipients extends MY_Controller {
 		parent::__construct();
 	}
 
-	public function recipients($vaccine = 0, $selected_year = 0, $selected_quarter = 0, $national = "", $region = "", $district = "") {
+	public function recipients($vaccine = 0, $selected_year = 0, $selected_quarter = 0, $national = 0, $region = 0, $district = 0) {
 		$this -> load -> database();
 		$year = date('Y');
 		$quarter = 1;
@@ -47,10 +47,10 @@ class Antigen_Recipients extends MY_Controller {
 			$sql_recipients = "select districts_issued.*,sum(quantity) as total_received,d2.name as district_name  from (select distinct issued_to_district as district_id from disbursements where owner = 'N0' and issued_to_district>0 and date_issued_timestamp between '" . $quarter_start_date . "' and '" . $quarter_end_date . "') districts_issued left join disbursements d on district_id  = d.issued_to_district left join districts d2 on district_id = d2.ID where date_issued_timestamp between '" . $quarter_start_date . "' and '" . $quarter_end_date . "' and owner != concat('D',district_id) and vaccine_id = '" . $vaccine_object -> id . "' group by district_id";
 		}
 		if ($region > 0) {
-			$sql_recipients = "select districts_issued.*,sum(quantity) as total_received,d2.name as district_name  from (select distinct issued_to_district as district_id from disbursements where owner = R'".$region."' and issued_to_district>0 and date_issued_timestamp between '" . $quarter_start_date . "' and '" . $quarter_end_date . "') districts_issued left join disbursements d on district_id  = d.issued_to_district left join districts d2 on district_id = d2.ID where date_issued_timestamp between '" . $quarter_start_date . "' and '" . $quarter_end_date . "' and owner != concat('D',district_id) and vaccine_id = '" . $vaccine_object -> id . "' group by district_id";
+			$sql_recipients = "select districts_issued.*,sum(quantity) as total_received,d2.name as district_name  from (select distinct issued_to_district as district_id from disbursements where owner = 'R" . $region . "' and issued_to_district>0 and date_issued_timestamp between '" . $quarter_start_date . "' and '" . $quarter_end_date . "') districts_issued left join disbursements d on district_id  = d.issued_to_district left join districts d2 on district_id = d2.ID where date_issued_timestamp between '" . $quarter_start_date . "' and '" . $quarter_end_date . "' and owner != concat('D',district_id) and vaccine_id = '" . $vaccine_object -> id . "' group by district_id";
 		}
 		if ($district > 0) {
-			$sql_recipients = "select districts_issued.*,sum(quantity) as total_received,d2.name as district_name  from (select distinct issued_to_district as district_id from disbursements where owner = 'D".$district."' and issued_to_district>0 and date_issued_timestamp between '" . $quarter_start_date . "' and '" . $quarter_end_date . "') districts_issued left join disbursements d on district_id  = d.issued_to_district left join districts d2 on district_id = d2.ID where date_issued_timestamp between '" . $quarter_start_date . "' and '" . $quarter_end_date . "' and owner != concat('D',district_id) and vaccine_id = '" . $vaccine_object -> id . "' group by district_id";
+			$sql_recipients = "select districts_issued.*,sum(quantity) as total_received,d2.name as district_name  from (select distinct issued_to_district as district_id from disbursements where owner = 'D" . $district . "' and issued_to_district>0 and date_issued_timestamp between '" . $quarter_start_date . "' and '" . $quarter_end_date . "') districts_issued left join disbursements d on district_id  = d.issued_to_district left join districts d2 on district_id = d2.ID where date_issued_timestamp between '" . $quarter_start_date . "' and '" . $quarter_end_date . "' and owner != concat('D',district_id) and vaccine_id = '" . $vaccine_object -> id . "' group by district_id";
 		}
 
 		//echo $sql_recipients;
@@ -103,7 +103,19 @@ class Antigen_Recipients extends MY_Controller {
 		echo $chart;
 	}
 
-	public function download_national_recipients($selected_year = 0, $selected_quarter = 0) {
+	public function download_recipients($selected_year = 0, $selected_quarter = 0, $national = 0, $region = 0, $district = 0) {
+		$title = "";
+		if ($national > 0) {
+			$title = "Antigen Recipients at Central Vaccine Store";
+		}
+		if ($region > 0) {
+			$region_object = Regions::getRegion($region);
+			$title = "Antigen Recipients at " . $region_object -> name;
+		}
+		if ($district > 0) {
+			$district_object = Districts::getDistrict($district);
+			$title = "Antigen Recipients at " . $district_object -> name . " District Store";
+		}
 		$this -> load -> database();
 		$year = date('Y');
 		$quarter = 1;
@@ -161,9 +173,18 @@ class Antigen_Recipients extends MY_Controller {
 		$data_buffer .= $this -> echoTitles($vaccines);
 		$district_data = array();
 		foreach ($vaccines as $vaccine_object) {
-			//query to get all the districts that received vaccines from the national store in that period
-			$sql_recipients = "select districts_issued.*,sum(quantity) as total_received,d2.name as district_name  from (select distinct issued_to_district as district_id from disbursements where owner = 'N0' and issued_to_district>0 and date_issued_timestamp between '" . $quarter_start_date . "' and '" . $quarter_end_date . "') districts_issued left join disbursements d on district_id  = d.issued_to_district left join districts d2 on district_id = d2.ID where date_issued_timestamp between '" . $quarter_start_date . "' and '" . $quarter_end_date . "' and owner != concat('D',district_id) and vaccine_id = '" . $vaccine_object -> id . "' group by district_id order by d2.name";
-			//echo $sql_recipients;
+			$sql_recipients = "";
+			//query to get all the districts that received vaccines from the selected store in that period
+			if ($national > 0) {
+				$sql_recipients = "select districts_issued.*,sum(quantity) as total_received,d2.name as district_name  from (select distinct issued_to_district as district_id from disbursements where owner = 'N0' and issued_to_district>0 and date_issued_timestamp between '" . $quarter_start_date . "' and '" . $quarter_end_date . "') districts_issued left join disbursements d on district_id  = d.issued_to_district left join districts d2 on district_id = d2.ID where date_issued_timestamp between '" . $quarter_start_date . "' and '" . $quarter_end_date . "' and owner != concat('D',district_id) and vaccine_id = '" . $vaccine_object -> id . "' group by district_id order by d2.name";
+			}
+			if ($region > 0) {
+				$sql_recipients = "select districts_issued.*,sum(quantity) as total_received,d2.name as district_name  from (select distinct issued_to_district as district_id from disbursements where owner = 'R" . $region . "' and issued_to_district>0 and date_issued_timestamp between '" . $quarter_start_date . "' and '" . $quarter_end_date . "') districts_issued left join disbursements d on district_id  = d.issued_to_district left join districts d2 on district_id = d2.ID where date_issued_timestamp between '" . $quarter_start_date . "' and '" . $quarter_end_date . "' and owner != concat('D',district_id) and vaccine_id = '" . $vaccine_object -> id . "' group by district_id order by d2.name";
+			}
+			if ($district > 0) {
+				$sql_recipients = "select districts_issued.*,sum(quantity) as total_received,d2.name as district_name  from (select distinct issued_to_district as district_id from disbursements where owner = 'D" . $district . "' and issued_to_district>0 and date_issued_timestamp between '" . $quarter_start_date . "' and '" . $quarter_end_date . "') districts_issued left join disbursements d on district_id  = d.issued_to_district left join districts d2 on district_id = d2.ID where date_issued_timestamp between '" . $quarter_start_date . "' and '" . $quarter_end_date . "' and owner != concat('D',district_id) and vaccine_id = '" . $vaccine_object -> id . "' group by district_id order by d2.name";
+			}
+			
 			$query = $this -> db -> query($sql_recipients);
 			$recipients_data = $query -> result_array();
 			$consumption = array();
@@ -202,7 +223,7 @@ class Antigen_Recipients extends MY_Controller {
 			$data_buffer .= "</tr>";
 		}
 		$data_buffer .= "</table>";
-		$this -> generatePDF($data_buffer, $periods[$quarter], $year);
+		$this -> generatePDF($data_buffer, $periods[$quarter], $year,$title);
 		//echo $data_buffer;
 	}
 
@@ -219,9 +240,9 @@ class Antigen_Recipients extends MY_Controller {
 		return $initial_headers;
 	}
 
-	function generatePDF($data, $quarter, $year) {
+	function generatePDF($data, $quarter, $year,$title) {
 		$html_title = "<img src='Images/coat_of_arms-resized.png' style='position:absolute; width:96px; height:92px; top:0px; left:0px; '></img>";
-		$html_title .= "<h3 style='text-align:center; text-decoration:underline; margin-top:-50px;'>Antigen Stock Distribution</h3>";
+		$html_title .= "<h3 style='text-align:center; text-decoration:underline; margin-top:-50px;'>$title</h3>";
 		$date = date('d-M-Y');
 		$html_title .= "<h5 style='text-align:center;'> for : " . $quarter . ", " . $year . " as at: " . $date . "</h5>";
 
