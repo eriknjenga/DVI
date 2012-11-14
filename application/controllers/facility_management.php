@@ -143,10 +143,10 @@ class Facility_Management extends MY_Controller {
 		foreach ($fridges as $fridge) {
 			if ($fridge > 0) {
 				$facility_fridge = new Facility_Fridges();
-				$facility_fridge->Facility = $facility_id;
-				$facility_fridge->Fridge = $fridge;
-				$facility_fridge->Timestamp = date('U');
-				$facility_fridge->save();
+				$facility_fridge -> Facility = $facility_id;
+				$facility_fridge -> Fridge = $fridge;
+				$facility_fridge -> Timestamp = date('U');
+				$facility_fridge -> save();
 				$counter++;
 			} else {
 				$counter++;
@@ -180,6 +180,18 @@ class Facility_Management extends MY_Controller {
 		$data['link'] = "system_administration";
 		$this -> load -> view('template', $data);
 
+	}
+
+	public function get_district_facilities($district) {
+		$facilities = Facilities::getDistrictFacilities($district);
+		$facilities_array = array();
+		$counter = 0;
+		foreach ($facilities as $facility) {
+			$facility_details = array("facility_code" => utf8_encode($facility -> facilitycode), "name" => utf8_encode($facility -> name));
+			$facilities_array[$counter] = $facility_details;
+			$counter++;
+		}
+		echo json_encode($facilities_array); 
 	}
 
 }

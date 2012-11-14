@@ -26,13 +26,22 @@ border-bottom: 1px solid #DDD;
 <div class="section_title"><?php echo $title;?></div>
 
 <div class="dashboard_menu">
+<?php 
+$access_level = $this -> session -> userdata('user_group');
+if($access_level == "1" || $access_level == "2"){?>
+	
+
 <a href="<?php echo site_url("vaccine_management");?>" class="quick_menu_link <?php if($quick_link == "vaccine_management"){echo "quick_menu_active";}?>">Vaccines</a> 
 <a href="<?php echo site_url("user_management/listing");?>" class="quick_menu_link <?php if($quick_link == "user_management"){echo "quick_menu_active";}?>">Users</a> 
 <a href="<?php echo site_url("district_management");?>" class="quick_menu_link <?php if($quick_link == "district_management"){echo "quick_menu_active";}?>">Districts</a>
 <a href="<?php echo site_url("region_management");?>" class="quick_menu_link <?php if($quick_link == "region_management"){echo "quick_menu_active";}?>">Regions</a> 
 <a href="<?php echo site_url("facility_management/whole_list");?>" class="quick_menu_link <?php if($quick_link == "facility_management"){echo "quick_menu_active";}?>">Facilities</a> 
 <a href="<?php echo site_url("fridge_management/listing");?>" class="quick_menu_link <?php if($quick_link == "fridge_management"){echo "quick_menu_active";}?>">Fridges</a>
-<a href="<?php echo site_url("vaccination_management/upload");?>" class="quick_menu_link <?php if($quick_link == "vaccination_management"){echo "quick_menu_active";}?>">DHIS Data Upload</a>  
+<a href="<?php echo site_url("vaccination_management/data_listing");?>" class="quick_menu_link <?php if($quick_link == "vaccination_management"){echo "quick_menu_active";}?>">DHIS Data Upload</a> 
+<?php
+}
+?>
+<a href="<?php echo site_url("email_management/view_data");?>" class="quick_menu_link <?php if($quick_link == "email_management"){echo "quick_menu_active";}?>">Email Recipients</a>   
  
 </div>
 <?php 

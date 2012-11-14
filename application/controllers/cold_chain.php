@@ -43,6 +43,9 @@ class Cold_Chain extends MY_Controller {
 		$counter = 0;
 		//Get the stock balances for each of the vaccines at this point in time
 		foreach ($freezer_vaccines as $vaccine) {
+			if($vaccine->Active == "0"){
+				continue;
+			}
 			$volume = $vaccine -> Vaccine_Packed_Volume;
 			$stock_balance = 0;
 			if ($national > 0) {
@@ -69,6 +72,9 @@ class Cold_Chain extends MY_Controller {
 		$counter = 0;
 		//Get the stock balances for each of the vaccines at this point in time
 		foreach ($fridge_vaccines as $vaccine) {
+			if($vaccine->Active == "0"){
+				continue;
+			}
 			$volume = $vaccine -> Vaccine_Packed_Volume;
 			$stock_balance = 0;
 			if ($national > 0) {
@@ -96,10 +102,9 @@ class Cold_Chain extends MY_Controller {
 <categories>
 <category label="+4"/>
 <category label="-20"/>
-</categories>';
+</categories>'; 
 		$counter = 0;
-		foreach ($all_vaccines as $vaccine) {
-
+		foreach ($all_vaccines as $vaccine) { 
 			if (isset($fridge_capacities[$counter])) {
 				$chart .= '<dataset seriesName="' . $fridge_content[$counter] . '">';
 				$chart .= '<set value="' . $fridge_capacities[$counter] . '"/>';
@@ -183,6 +188,9 @@ class Cold_Chain extends MY_Controller {
 		$fridge_capacity = $total_net_volume_4deg;
 		//Get the stock balances for each of the vaccines at this point in time
 		foreach ($freezer_vaccines as $vaccine) {
+					if($vaccine->Active == "0"){
+				continue;
+			}
 			$volume = $vaccine -> Vaccine_Packed_Volume;
 			$stock_balance = 0;
 			if ($national > 0) {
@@ -207,6 +215,9 @@ class Cold_Chain extends MY_Controller {
 		}
 		//Get the stock balances for each of the vaccines at this point in time
 		foreach ($fridge_vaccines as $vaccine) {
+					if($vaccine->Active == "0"){
+				continue;
+			}
 			$volume = $vaccine -> Vaccine_Packed_Volume;
 			$stock_balance = 0;
 			if ($national > 0) {
@@ -284,6 +295,9 @@ class Cold_Chain extends MY_Controller {
 		}
 		//Get the stock balances for each of the vaccines at this point in time
 		foreach ($fridge_vaccines as $vaccine) {
+							if($vaccine->Active == "0"){
+				continue;
+			}
 			$volume = $vaccine -> Vaccine_Packed_Volume;
 			if ($national > 0) {
 				$stock_balance = Disbursements::getNationalPeriodBalance($vaccine -> id, $now);
@@ -301,6 +315,9 @@ class Cold_Chain extends MY_Controller {
 			}
 		}
 		foreach ($freezer_vaccines as $vaccine) {
+							if($vaccine->Active == "0"){
+				continue;
+			}
 			$volume = $vaccine -> Vaccine_Packed_Volume;
 			if ($national > 0) {
 				$stock_balance = Disbursements::getNationalPeriodBalance($vaccine -> id, $now);
@@ -392,6 +409,9 @@ class Cold_Chain extends MY_Controller {
 		}
 		//Get the stock balances for each of the vaccines at this point in time
 		foreach ($freezer_vaccines as $vaccine) {
+							if($vaccine->Active == "0"){
+				continue;
+			}
 			$volume = $vaccine -> Vaccine_Packed_Volume;
 			if ($national > 0) {
 				$stock_balance = Disbursements::getNationalPeriodBalance($vaccine -> id, $now);

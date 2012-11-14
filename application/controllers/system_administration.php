@@ -11,7 +11,7 @@ class System_Administration extends MY_Controller {
 	}
 
 	public function admin_view() {
-		redirect("vaccine_management");
+		redirect("email_management");
 	}
 
 	private function base_params($data) {
