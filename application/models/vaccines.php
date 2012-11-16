@@ -17,6 +17,7 @@ class Vaccines extends Doctrine_Record {
 		$this -> hasColumn('Tray_Color', 'varchar', 10);
 		$this -> hasColumn('Active', 'varchar', 5);
 		$this -> hasColumn('Fridge_Compartment', 'varchar', 5);
+		$this -> hasColumn('Dhis_Columns', 'varchar', 100);
 	}
 
 	public function setUp() {

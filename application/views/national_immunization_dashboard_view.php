@@ -40,8 +40,9 @@ $(function() {
 				var selected_year = $("#filter_year").find(":selected").attr("value");
 				var selected_district = $("#filter_district").find(":selected").attr("value");
 				var selected_facility = $("#filter_facility").find(":selected").attr("value");
+				var selected_type = $("#filter_type").find(":selected").attr("value");
 				var chart = new FusionCharts("<?php echo base_url()."Scripts/FusionCharts/Charts/MSLine.swf"?>", "ChartId", "850", "450", "0", "0");	
-				var url = '<?php echo base_url();?>vaccination_management/get_cummulative_graph/'+selected_year+'/'+vaccine_string+'/'+selected_district+'/'+selected_facility; 
+				var url = '<?php echo base_url();?>vaccination_management/get_cummulative_graph/'+selected_year+'/'+vaccine_string+'/'+selected_district+'/'+selected_facility+'/'+selected_type; 
 				chart.setDataURL(url);
 				chart.render("immunization_graph_container");
 		});
@@ -63,7 +64,7 @@ $(function() {
 	}
 	#graph_content {
 		width: 100%;
-		margin: 0 auto;
+		margin: 0 auto; 
 	}
 	.larger_graph {
 		float: right;
@@ -124,6 +125,7 @@ $(function() {
 				<th colspan="2">Typhoid</th>
 				<th colspan="1">Yellow Fever</th>
 				<th colspan="1">Measles</th>
+				<th colspan="1"> </th>
 			</tr>
 			<tr>
 				<td>
@@ -146,25 +148,33 @@ $(function() {
 				<td>
 				<input type="checkbox" class="antigens" immunization="measles_admin"/>
 				Measles </td>
+				<td>  </td>
 			</tr>
 		</table>
 		<br/>
 		<b>District:</b>
-		<select id="filter_district">
+		<select id="filter_district" style="width: 110px;">
 			<option value="0">All Districts</option>
 			<?php 
 foreach($districts as $district){
+		if(strlen($district['name'])>0){
 			?>
-			<option value="<?php echo $district->id;?>"><?php echo $district->name;?></option>
+			<option value="<?php echo $district['ID'];?>"><?php echo $district['name'];?></option>
 			<?php 
+			}
 			}
 			?>
 		</select>
 		<b>Facility:</b>
-		<select id="filter_facility">
+		<select id="filter_facility" style="width: 110px;">
 			<option value="0">All Facilities</option>
 		</select>
-		<b>Analysis Year:</b>
+		<b>Graph Type:</b>
+		<select id="filter_type" style="width: 110px;">
+			<option value="0">Cummulative Immunizations</option>
+			<option value="1">Month-on-Month Immunizations</option>
+		</select>
+		<b>Year:</b>
 		<select id="filter_year">
 			<?php
 $year = date('y');
@@ -181,6 +191,7 @@ for($x=0;$x<=10;$x++){
 			}
 			?>
 		</select>
+
 		<input type="button" id="filter_graph" value="Filter Graph" class="button"/>
 	</div>
 	<div id = "immunization_graph_container"></div>

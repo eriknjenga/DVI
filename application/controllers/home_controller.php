@@ -8,7 +8,26 @@ class Home_Controller extends MY_Controller {
 	}
 
 	public function index() {
-		$this -> new_dashboard();
+		$this -> platform_home();
+	}
+
+	public function platform_home() {
+		//Check if the user is already logged in and if so, take him to their home page. Else, display the platform home page.
+		$user_id = $this -> session -> userdata('user_id');
+		if (strlen($user_id) > 0) {
+			redirect("home_controller/new_dashboard");
+		}
+		$this -> load -> database();
+		//Retrieve only the districts in the mfl
+		$sql = "SELECT distinct district,d.ID,d.name FROM `facilities` f left join districts d on f.district = d.id order by name";
+		$query = $this -> db -> query($sql);
+		$data['districts'] = $query -> result_array(); 
+		$data['current'] = "home_controller";
+		$data['title'] = "System Dashboard";
+		$data['banner_text'] = "System Dashboard";
+		$data['content_view'] = "national_immunization_dashboard_view";
+		$data['scripts'] = array("FusionCharts/FusionCharts.js", "jquery-ui.js", "tab.js");
+		$this -> load -> view("platform_template", $data);
 	}
 
 	public function dashboard($dashboard = "country_stock_view") {
@@ -54,10 +73,10 @@ class Home_Controller extends MY_Controller {
 
 		$year = date('Y');
 		$data['title'] = "System Dashboard";
-		
+
 		$data['vaccines'] = Vaccines::getAll_Minified();
 		$data['styles'] = array("jquery-ui.css", "tab.css");
-		$data['scripts'] = array("FusionCharts/FusionCharts.js","jquery-ui.js", "advanced_tabs.js");
+		$data['scripts'] = array("FusionCharts/FusionCharts.js", "jquery-ui.js", "advanced_tabs.js");
 		$data['link'] = "home";
 		$this -> load -> view('template', $data);
 

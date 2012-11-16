@@ -32,7 +32,7 @@ class Vaccination_Management extends MY_Controller {
 		redirect("vaccination_management/data_listing");
 	}
 
-	function get_cummulative_graph($year = 0, $antigens = 0, $district = 0, $facility = 0) {
+	function get_cummulative_graph($year = 0, $antigens = 0, $district = 0, $facility = 0, $type = 0) {
 		$graph_sub_title = "";
 		if ($year == 0) {
 			$year = date('y');
@@ -129,7 +129,13 @@ class Vaccination_Management extends MY_Controller {
 				if (isset($antigen_dataset_data[$current_month])) {
 					//check if the next value is non-existent, if so, display a dotted line, else, display a kawaida line
 					if (sizeof($antigen_dataset_data) != $counter) {
-						$cummulative += $antigen_dataset_data[$current_month];
+						if($type == 0){
+							$cummulative += $antigen_dataset_data[$current_month];
+						}
+						else if($type == 1){
+							$cummulative = $antigen_dataset_data[$current_month];
+						}
+						
 						if (isset($antigen_dataset_data[$days[$counter + 1]])) {
 							$chart .= '<set value="' . $cummulative . '"/>';
 						} else {
@@ -153,24 +159,17 @@ class Vaccination_Management extends MY_Controller {
 	}
 
 	public function dashboard() {
-		$identifier = $this -> session -> userdata('user_identifier');
-		if ($this -> session -> userdata('user_identifier') == 'national_officer') {
-			$data['districts'] = Districts::getAllDistricts();
-			$data['content_view'] = "national_immunization_dashboard_view";
-			$data['title'] = "National Immunization Data";
-		}
-		if ($this -> session -> userdata('user_identifier') == 'district_officer') {
-			$data['content_view'] = "regional_immunization_dashboard_view";
-			$data['title'] = "Regional Immunization Data";
-		}
-		if ($this -> session -> userdata('user_identifier') == 'provincial_officer') {
-			$data['content_view'] = "district_immunization_dashboard_view";
-			$data['title'] = "District Immunization Data";
-		}
+		$this -> load -> database();
+		//Retrieve only the districts in the mfl
+		$sql = "SELECT distinct district,d.ID,d.name FROM `facilities` f left join districts d on f.district = d.id order by name";
+		$query = $this -> db -> query($sql);
+		$data['districts'] = $query -> result_array(); 
+		$data['current'] = "home_controller";
+		$data['title'] = "System Dashboard";
+		$data['banner_text'] = "System Dashboard";
+		$data['content_view'] = "national_immunization_dashboard_view";
 		$data['scripts'] = array("FusionCharts/FusionCharts.js", "jquery-ui.js", "tab.js");
-		$data['styles'] = array("jquery-ui.css", "tab.css");
-		$data['link'] = "vaccination_management";
-		$this -> load -> view('template', $data);
+		$this -> load -> view("platform_template", $data);
 	}
 
 	function do_upload() {
