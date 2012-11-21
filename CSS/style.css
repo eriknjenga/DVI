@@ -310,39 +310,45 @@ input[type =
 	border: 1px solid black;
 }
 /* Tables */
-
 table.data-table {
-	border: 2px solid #DDD;
-	margin: 10px auto;
-	border-spacing: 0px;
+	font-family:arial;
+	background-color: #CDCDCD;
+	margin:10px 0pt 15px;
+	font-size: 8pt;
+	width: 100%;
+	text-align: left;
 }
-table.data-table caption {
-	letter-spacing: 1px;
-	font-weight: bold;
-	text-shadow: 0 1px rgba(0, 0, 0, 0.1);
-	font-size: 14px;
-}
-table.data-table th {
-	border: none;
-	color: #036;
-	text-align: center;
-	text-shadow: 0 1px rgba(0, 0, 0, 0.1);
-	letter-spacing: 1px;
-	background-color: #F5F5F5;
-	border: 2px solid #DDD;
-	border-top: none;
-}
-table.data-table td, table th {
+table.data-table thead tr th, table.data-table tfoot tr th {
+	background-color: #e6EEEE;
+	border: 1px solid #FFF;
+	font-size: 8pt;
 	padding: 4px;
 }
-table.data-table td {
-	border: none;
-	border-left: 2px solid #DDD;
-	border-right: 2px solid #DDD;
-	height: 30px;
-	margin: 0px;
-	max-width: 350px;
+table.data-table thead tr .header {
+	background-image: url(bg.gif);
+	background-repeat: no-repeat;
+	background-position: center right;
+	cursor: pointer;
 }
+table.data-table tbody td {
+	color: #3D3D3D;
+	padding: 4px;
+	background-color: #FFF;
+	vertical-align: top;
+}
+table.data-table tbody tr.odd td {
+	background-color:#F0F0F6;
+}
+table.data-table thead tr .headerSortUp {
+	background-image: url(asc.gif);
+}
+table.data-table thead tr .headerSortDown {
+	background-image: url(desc.gif);
+}
+table.data-table thead tr .headerSortDown, table.data-table thead tr .headerSortUp {
+background-color: #8dbdd8;
+}
+
 table.data-table tr.normal_row td {
 	background: white;
 }
@@ -354,7 +360,7 @@ table.data-table tr.alternate_row td {
 }
 .link {
 	text-decoration: none;
-	color: #ED5D3B;
+	color: #ED5D3B !important;
 	font-weight: bold;
 	font-size: 12px;
 	text-shadow: 0 1px rgba(0, 0, 0, 0.1);
@@ -362,7 +368,7 @@ table.data-table tr.alternate_row td {
 	margin-left: 4px;
 }
 .link:hover {
-	color: black;
+	color: black !important;
 	cursor: pointer;
 }
 .label {

@@ -55,7 +55,7 @@ if (isset($styles)) {
 
 				<div id="system_title">
 					<span style="display: block; font-weight: bold; font-size: 14px; margin:2px;">Ministry of Medical Services/Public Health and Sanitation</span>
-					<span style="display: block; font-size: 12px;">ARV Drugs Supply Chain Management Tool</span>
+					<span style="display: block; font-size: 12px;">Division of Vaccines and Immunization (DVI)</span>
 				</div>
 				<div class="banner_text"><?php echo $banner_text;?></div>
  <div id="top_menu"> 
@@ -67,12 +67,16 @@ if (isset($styles)) {
 	if ($current == "vaccine_stock_consumption") {echo " top_menu_active ";
 	}
 ?>">Vaccine Stock Consumption</a>
-<a href="<?php echo site_url('commodity_management/commodity_breakdown');?>" class="top_menu_link  <?php
-	if ($current == "commodity_management") {echo " top_menu_active ";
+<a href="<?php echo site_url('wastage_analysis');?>" class="top_menu_link  <?php
+	if ($current == "wastage_analysis") {echo " top_menu_active ";
 	}
-?>">Stocks</a>
+?>">Wastage Analysis</a>
+<a href="<?php echo site_url('stock_out_analysis');?>" class="top_menu_link  <?php
+	if ($current == "stock_out_analysis") {echo " top_menu_active ";
+	}
+?>">Stock-Out Analysis</a>
 <div id="my_profile_link_container" style="display: inline">
-<a href="<?php echo site_url('user_management/login');?>" class="top_menu_link" id="my_profile_link">System Login </a>
+<a href="<?php echo site_url('user_management');?>" class="top_menu_link" id="my_profile_link">System Login </a>
 </div>
  </div>
 

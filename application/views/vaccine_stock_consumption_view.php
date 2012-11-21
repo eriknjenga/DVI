@@ -1,5 +1,8 @@
 <script>
-$(function() {
+$(function() { 
+		if($('#myTable tr').length>1){
+			 $("#myTable").tablesorter(); 
+		}
 		$("#filter_graph").click(function(){
 				var selected_year = $("#filter_year").find(":selected").attr("value");
 				var selected_vaccine = $("#filter_vaccine").find(":selected").attr("value");
@@ -53,17 +56,20 @@ $(function() {
 </style>
 <div id="graph_content">
 	<div id="graph_filter"> 
-		<b>District:</b>
+		<b>Antigen:</b>
 		<select id="filter_vaccine" style="width: 110px;"> 
 			<?php 
 foreach($vaccines as $vaccine){
 			?>
-			<option value="<?php echo $vaccine->id;?>"><?php echo $vaccine->Name;?></option>
+			<option <?php
+			if ($selected_vaccine == $vaccine->id) {echo "selected";
+			}
+			?> value="<?php echo $vaccine->id;?>"><?php echo $vaccine->Name;?></option>
 			<?php 
 			} 
 			?>
 		</select>
-		<b>Year:</b>
+			<b>Year:</b>
 		<select id="filter_year">
 			<?php
 $year = date('Y');
@@ -71,7 +77,7 @@ $counter = 0;
 for($x=0;$x<=10;$x++){
 			?>
 			<option <?php
-			if ($counter == 0) {echo "selected";
+			if ($selected_year == $year) {echo "selected";
 			}
 			?> value="<?php echo $year;?>"><?php echo $year;?></option>
 			<?php
@@ -82,48 +88,44 @@ for($x=0;$x<=10;$x++){
 		</select>
 		<b>Start Month:</b>
 		<select id="filter_start_month">
-			<option value="1">January</option>
-			<option value="2">February</option>
-			<option value="3">March</option>
-			<option value="4">April</option>
-			<option value="5">May</option>
-			<option value="6">June</option>
-			<option value="7">July</option>
-			<option value="8">August</option>
-			<option value="9">September</option>
-			<option value="10">October</option>
-			<option value="11">November</option>
-			<option value="12">December</option>	
+			<?php  
+for ($i = 1; $i <= 12; $i++) {
+    $timestamp = mktime(0, 0, 0, $i, 1);?>
+    <option  <?php
+			if ($selected_start_month == $i) {echo "selected";
+			}
+			?> value="<?php echo  $i;?>"><?php echo date('F',$timestamp);?></option>
+    <?php 
+}
+			?> 
 		</select>
-		<b>End Month:</b>
+			<b>End Month:</b>
 		<select id="filter_end_month">
-			<option value="12">December</option>
-			<option value="11">November</option>
-			<option value="10">October</option>
-			<option value="9">September</option>
-			<option value="8">August</option>
-			<option value="7">July</option>
-			<option value="6">June</option>
-			<option value="5">May</option>
-			<option value="4">April</option>
-			<option value="3">March</option>
-			<option value="2">February</option>
-			<option value="1">January</option>	
+			<?php  
+for ($i = 1; $i <= 12; $i++) {
+    $timestamp = mktime(0, 0, 0, $i, 1);?>
+    <option  <?php
+			if ($selected_end_month == $i) {echo "selected";
+			}
+			?> value="<?php echo  $i;?>"><?php echo date('F',$timestamp);?></option>
+    <?php 
+}
+			?> 
 		</select>
 
-		<input type="button" id="filter_graph" value="Filter Graph" class="button"/>
+		<input type="button" id="filter_graph" value="Filter Analysis" class="button"/>
 	</div>
 	<div id = "results_container">
-		<table class="data-table">
-			<caption><?php echo $table_title;?></caption>
+		<table class="data-table" id="myTable"> 
+			<thead>
 			<tr><th>District Name</th><th>Children Immunized</th><th>Doses Received</th></tr>
-		
+		</thead>
 		<?php 
 		$alt_checker = 0;
 			foreach($district_details as $detail){
 				
 				?>
-				<tr <?php if($alt_checker == 0){ $alt_checker = 1; echo "class='normal_row'";} else{{ $alt_checker = 0; echo "class='alternate_row'";}} ?>><td><?php echo $detail['name']; ?></td><td><?php echo $detail['total_administered']; ?></td><td><?php echo $detail['total_received']; ?></td></tr>
+				<tr><td><?php echo $detail['name']; ?></td><td><?php echo $detail['total_administered']; ?></td><td><?php echo $detail['total_received']; ?></td></tr>
 			<?php }
 		?>
 		</table>

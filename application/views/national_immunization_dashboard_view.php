@@ -92,11 +92,13 @@ $(function() {
 		<b>Immunization(s)</b>
 		</br>
 		<table class="data-table">
+			<thead>
 			<tr>
 				<th colspan="3">DTP-HepB+Hib</th>
 				<th colspan="4">OPV</th>
 				<th colspan="1">BCG</th>
 			</tr>
+			</thead>
 			<tr>
 				<td>
 				<input type="checkbox" class="antigens" checked immunization="dpt1_admin"/>
@@ -120,6 +122,7 @@ $(function() {
 				<input type="checkbox" class="antigens" immunization="bcg_admin"/>
 				BCG </td>
 			</tr>
+			<thead>
 			<tr>
 				<th colspan="3">PCV-10</th>
 				<th colspan="2">Typhoid</th>
@@ -127,6 +130,7 @@ $(function() {
 				<th colspan="1">Measles</th>
 				<th colspan="1"> </th>
 			</tr>
+			</thead>
 			<tr>
 				<td>
 				<input type="checkbox" class="antigens" immunization="pn1_admin"/>

@@ -18,6 +18,9 @@ class Vaccines extends Doctrine_Record {
 		$this -> hasColumn('Active', 'varchar', 5);
 		$this -> hasColumn('Fridge_Compartment', 'varchar', 5);
 		$this -> hasColumn('Dhis_Columns', 'varchar', 100);
+		$this -> hasColumn('Dhis_Stock', 'varchar', 20);
+		$this -> hasColumn('Dhis_Received', 'varchar', 20);
+		$this -> hasColumn('Dhis_Remaining', 'varchar', 20);
 	}
 
 	public function setUp() {
@@ -52,7 +55,7 @@ class Vaccines extends Doctrine_Record {
 	}
 
 	public static function getFirstVaccine() {
-		$query = Doctrine_Query::create() -> select("Name,Doses_Required,Wastage_Factor") -> from("vaccines") -> orderBy("Name asc")->limit("1");
+		$query = Doctrine_Query::create() -> select("Name,Doses_Required,Wastage_Factor") -> from("vaccines") -> orderBy("Name asc") -> limit("1");
 		$vaccine = $query -> execute();
 		return $vaccine[0];
 	}

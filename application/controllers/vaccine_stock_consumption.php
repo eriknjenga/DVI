@@ -11,20 +11,27 @@ class Vaccine_Stock_Consumption extends MY_Controller {
 	public function ranking($year = 0, $vaccine = 0, $from = 0, $to = 0) {
 		$table_string = "";
 		$vaccine_object = null;
+		$start_month = 0;
+		$end_month = 0;
 		if ($year == 0) {
 			$year = date('Y');
 		}
 		//If no dates are selected, make the default to be jan to dec of the current year
 		if ($to == 0) {
 			$to = date("U", mktime(0, 0, 0, 12, 31, date("Y")));
+			$end_month = 12;
 		} else if ($to != 0) {
 			$a_date = "$year-$to-1";
 			$last_day = date("t", strtotime($a_date));
+			$end_month = $to;
 			$to = date("U", mktime(0, 0, 0, $to, $last_day, $year));
+			
 		}
 		if ($from == 0) {
 			$from = date("U", mktime(0, 0, 0, 1, 1, date('Y')));
+			$start_month = 1;
 		} else if ($from != 0) {
+			$start_month = $from;
 			$from = date("U", mktime(0, 0, 0, $from, 1, $year));
 		}
 		//If no vaccine is selected, get the first vaccine in the system
@@ -57,13 +64,18 @@ class Vaccine_Stock_Consumption extends MY_Controller {
 		$query = $this -> db -> query($sql);
 		$district_details = $query -> result_array();
 		$data['table_title'] = $table_title;
+		$data['selected_year'] = $year;
+		$data['selected_vaccine'] = $vaccine;
+		$data['selected_start_month'] = $start_month;
+		$data['selected_end_month'] = $end_month; 
 		$data['district_details'] = $district_details;
 		$data['current'] = "vaccine_stock_consumption";
 		$data['title'] = "Vaccine Stock Consumption";
 		$data['banner_text'] = "Vaccine Stock Consumption";
-		$data['vaccines'] = Vaccines::getAll();
+		$data['vaccines'] = Vaccines::getAll_Minified();
 		$data['content_view'] = "vaccine_stock_consumption_view";
-		$data['scripts'] = array("jquery-ui.js", "tab.js");
+		$data['scripts'] = array("jquery-ui.js", "tab.js", "table_sorter.js");
+		$data['styles'] = array("table_sorter.css");
 		$this -> load -> view("platform_template", $data);
 	}
 
