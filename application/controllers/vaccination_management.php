@@ -258,18 +258,21 @@ class Vaccination_Management extends MY_Controller {
 				$dhis_data -> Yellow_Stock = $row[52];
 				$dhis_data -> Yellow_Received = $row[53];
 				$dhis_data -> Yellow_Remaining = $row[54];
-				$dhis_data -> Vitamin_100_Stock = $row[55];
-				$dhis_data -> Vitamin_100_Received = $row[56];
-				$dhis_data -> Vitamin_100_Remaining = $row[57];
-				$dhis_data -> Vitamin_200_Stock = $row[58];
-				$dhis_data -> Vitamin_200_Received = $row[59];
-				$dhis_data -> Vitamin_200_Remaining = $row[60];
-				$dhis_data -> Vitamin_50_Stock = $row[61];
-				$dhis_data -> Vitamin_50_Received = $row[62];
-				$dhis_data -> Vitamin_50_Remaining = $row[63];
-				$dhis_data -> Vitamin_200000_Iu = $row[64];
-				$dhis_data -> Vitamin_Lactating = $row[65];
-				$dhis_data -> Vitamin_Supplement = $row[66];
+				$dhis_data -> Measles_Stock = $row[55];
+				$dhis_data -> Measles_Received = $row[56];
+				$dhis_data -> Measles_Remaining = $row[57];
+				$dhis_data -> Vitamin_100_Stock = $row[58];
+				$dhis_data -> Vitamin_100_Received = $row[59];
+				$dhis_data -> Vitamin_100_Remaining = $row[60];
+				$dhis_data -> Vitamin_200_Stock = $row[61];
+				$dhis_data -> Vitamin_200_Received = $row[62];
+				$dhis_data -> Vitamin_200_Remaining = $row[63];
+				$dhis_data -> Vitamin_50_Stock = $row[64];
+				$dhis_data -> Vitamin_50_Received = $row[65];
+				$dhis_data -> Vitamin_50_Remaining = $row[66];
+				$dhis_data -> Vitamin_200000_Iu = $row[67];
+				$dhis_data -> Vitamin_Lactating = $row[68];
+				$dhis_data -> Vitamin_Supplement = $row[69];
 				$dhis_data -> save();
 
 			}

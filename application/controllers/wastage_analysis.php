@@ -67,7 +67,7 @@ class Wastage_Analysis extends MY_Controller {
 			$sql .= ") as total_administered,(";
 			//add the chunk of the query that calculates consumption
 			$sql .= $dhis_consumption_columns;
-			$sql .= ") as total_consumed FROM dhis_data d left join facilities f on d.facility_code = f.facilitycode where reporting_period = 'Jun-12') facility_data, (SELECT @rownum:=0) r  having wastage>0 and total_consumed>0 and total_administered>0 order by district, wastage desc) wastage_data group by district) median_facilities where wastage_info.row_number = median";
+			$sql .= ") as total_consumed FROM dhis_data d left join facilities f on d.facility_code = f.facilitycode where reporting_period = '$period') facility_data, (SELECT @rownum:=0) r  having wastage>0 and total_consumed>0 and total_administered>0 order by district, wastage desc) wastage_data group by district) median_facilities where wastage_info.row_number = median";
 
 			//echo $sql."<br><br><br><br>";
 			$query = $this -> db -> query($sql);

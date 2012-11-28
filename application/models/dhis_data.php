@@ -46,6 +46,9 @@ class Dhis_Data extends Doctrine_Record {
 		$this -> hasColumn('Yellow_Stock', 'varchar', 10);
 		$this -> hasColumn('Yellow_Received', 'varchar', 10);
 		$this -> hasColumn('Yellow_Remaining', 'varchar', 10);
+		$this -> hasColumn('Measles_Stock', 'varchar', 10);
+		$this -> hasColumn('Measles_Received', 'varchar', 10);
+		$this -> hasColumn('Measles_Remaining', 'varchar', 10);
 		$this -> hasColumn('Vitamin_100_Stock', 'varchar', 10);
 		$this -> hasColumn('Vitamin_100_Received', 'varchar', 10);
 		$this -> hasColumn('Vitamin_100_Remaining', 'varchar', 10);
