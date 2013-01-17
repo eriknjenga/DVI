@@ -61,64 +61,64 @@ if (isset($styles)) {
 	}
 }
 ?>
+<script type="text/javascript">
+	$(document).ready(function() {
+		$("#my_profile_link_container").hover(function() {
+			var html = "<a href='<?php echo base_url().'user_management/change_password'?>' class='top_menu_link temp_link'>Change Password</a> <a href='<?php echo base_url().'user_management/logout'?>' class='top_menu_link temp_link'>Logout</a> ";
+			$("#my_profile_link").css('display','none'); 
+			$(this).append(html);
+		}, function() {
+			$("#my_profile_link").css('display','block');
+			$(this).find(".temp_link").remove();
+		});
+	});
+
+</script>
 <style type="text/css" media="screen">
 #logo{
 background: url("<?php echo base_url().'Images/DVI_logo_resized.png'?>") no-repeat;
 
-}
-#logo2{
-position:absolute;
-top:0;
-left:0;  
-background: url("<?php echo base_url().'Images/coat_of_arms-resized.png'?>") no-repeat;
-}
-#alerts_panel_image{
-background: url("<?php echo base_url().'Images/alert_resized.png'?>") no-repeat;
-}
-#notification_panel_image{
-background: url("<?php echo base_url().'Images/Notification_Resized.png'?>") no-repeat;
-}
+} 
+	#my_profile_link_container .generated_link{
+		display: none;
+	}
+	#my_profile_link{ 
+		width: 150px !important;
+		margin:0px !important;
+		padding:0px !important;
+	}
+	#my_profile_link_continer{
+		min-width: 150px !important;
+		background-color: red;
+		height:100px;
+	}
+	.temp_link{
+		font-size: 10px;
+		width:100px !important;
+		background-color: #B80000;  
+		margin:0px;
+	}
 </style>
 </head>
 
 <body>
-<div id="wrapper">
-<div style="margin:0 auto 0 auto; height:110px;" ></div> 
-<div id="top-panel">
-<div>
-<a href="<?php echo base_url();?>" id="logo2"></a>
-<span id="main_title">Division of Vaccines and Immunization (DVI) </span>
-<span id="sub_title">Kenyan Ministry of Public Health and Sanitation </span>
+<div id="wrapper"> 
+<div id="top-panel"> 
+		<div class="logo">
+			<a class="logo" href="<?php echo base_url();?>" ></a> 
+</div>
 
-</div>
-<div id="logged_in">
-<span class="login_details">Logged in as:</span><?php echo $this -> session -> userdata('full_name');?><br>
-<?php
-$user_levels = array("Administrator", "National Level", "Provincial Store", "District Store");
-?>
-<span class="login_details" style="color: #E01B4C">Access Level:</span><?php echo $this -> session -> userdata('user_group_name');?><br>
-<span class="login_details">Date:</span><?php echo date("d-m-Y");?><br>
-<a class="link" href="<?php echo site_url("user_management/change_password");?>"  >Change Password</a> -
-<a class="link" href="<?php echo site_url("user_management/logout");?>"  >Logout</a>
-</div>
-</div>
+				<div id="system_title">
+					<span style="display: block; font-weight: bold; font-size: 14px; margin:2px;">Ministry of Medical Services/Public Health and Sanitation</span>
+					<span style="display: block; font-size: 12px;">Divison of Vaccines and Immunization</span>
+				</div>
 <div id="main_wrapper">
 <div id="level2">
-<!-- 
-<div id="alerts_panel">
-<div id="alerts_panel_image"></div>
-<div id="alerts_panel_text">
-<ul>
-<li>Alert Example (e.g. Polio Vaccine levels in Kiambu East are Low)</li>
-</ul>
-</div>
-
-</div> 
--->
+ 
 <div id="top_menu">
 
 <div id="top_menu_container">
-<a href="<?php echo site_url();?>" class="top_menu_link <?php
+<a href="<?php echo site_url();?>" class="first_link top_menu_link <?php
 if ($link == "home") {echo "top_menu_active";
 }
 ?>">Home</a>
@@ -140,52 +140,59 @@ foreach($menus as $menu){?>
 		}
 	?>
 
- 
+ <div id="my_profile_link_container" style="display: inline">
+<a ref="#" class="top_menu_link" id="my_profile_link"><?php echo $this -> session -> userdata('full_name');?></a>
 </div>
-<style type="text/css">
-#top_menu_container{
-width:<?php echo $menu_counter * 135;?>px; 
-margin-left:auto; 
-margin-right:auto;
-}
-
-</style>
+</div> 
 
 </div>
+</div>
 
-<?php
+
+
+
+</div>
+</div>
+
+<div id="container">
+	<?php
 if($identifier != "general_user")
 {
 ?>
-<div id="quick_menu">
-<span style="color: #555; text-align: center; font:12px; font-weight:bold; margin:5px">Quick Menu</span>
+<div id="sub_menu">
 <div style="width:auto; margin-right:auto;">
-<a  class="quick_menu_link <?php
-if ($quick_link == "new_disbursement") {echo "quick_menu_active";
+<a  class="top_menu_link sub_menu_link <?php
+if ($quick_link == "new_disbursement") {echo "top_menu_active";
 }
 ?>" href="<?php echo site_url("disbursement_management/new_batch_disbursement");?>">Issue Vaccines</a>
 
-<a  class="quick_menu_link <?php
-if ($quick_link == "stock_count") {echo "quick_menu_active";
+<a  class="top_menu_link sub_menu_link <?php
+if ($quick_link == "stock_count") {echo "top_menu_active";
 }
 ?>" href="<?php echo site_url("disbursement_management/stock_count");?>">Stock Count</a>
 
   <?php
   if($admin_national_only){?>
-<a class="quick_menu_link <?php
-if ($quick_link == "new_batch") {echo "quick_menu_active";
+<a class="top_menu_link sub_menu_link <?php
+if ($quick_link == "new_batch") {echo "top_menu_active";
 }
 ?>" href="<?php echo site_url("batch_management/new_batch");?>">Stock Delivery</a> 
+<a style="width: 200px !important;" class="last_link top_menu_link sub_menu_link <?php
+if ($quick_link == "regional_statistics") {echo "top_menu_active";
+}
+?>" href="<?php echo site_url("regional_statistics");?>">Regional Statistics</a> 
+  
+ 
  <?php }?>
  
 
  <?php if($district_only){?>
-<a href="<?php echo site_url("facility_management/new_facility");?>" class="quick_menu_link <?php
-if ($quick_link == "new_facility") {echo "quick_menu_active";
+<a href="<?php echo site_url("facility_management/new_facility");?>" class="top_menu_link sub_menu_link <?php
+if ($quick_link == "new_facility") {echo "top_menu_active";
 }
 ?>">Add New Facility</a>
-<a href="<?php echo site_url("facility_management/add");?>" class="quick_menu_link <?php
-if ($quick_link == "new_extra_facility") {echo "quick_menu_active";
+<a href="<?php echo site_url("facility_management/add");?>" class="top_menu_link sub_menu_link <?php
+if ($quick_link == "new_extra_facility") {echo "top_menu_active";
 }
 ?>">Add Extra Facility</a>
 
@@ -193,8 +200,8 @@ if ($quick_link == "new_extra_facility") {echo "quick_menu_active";
   <?php 
 
   if($district_only || $region_only){?>
-<a href="<?php echo site_url("disbursement_management/add_receipt");?>" class="quick_menu_link <?php
-if ($quick_link == "new_receipt") {echo "quick_menu_active";
+<a href="<?php echo site_url("disbursement_management/add_receipt");?>" class="top_menu_link sub_menu_link <?php
+if ($quick_link == "new_receipt") {echo "top_menu_active";
 }
 ?>">Stock Delivery</a>
 
@@ -204,13 +211,6 @@ if ($quick_link == "new_receipt") {echo "quick_menu_active";
 <?php }?>
 
 </div>
-
-
-
-
-</div>
-
-<div id="container">
   <div id="content">
 <div id="center_content">
 

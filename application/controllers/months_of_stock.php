@@ -9,12 +9,12 @@ class Months_Of_Stock extends MY_Controller {
 
 	public function get_mos_balance($national = "", $region = "", $district = "") {
 		$title = "";
-		if ($national > 0) {
+		if ($national > 0 || $region == 0) {
 			$title = "MOS Available at CVS Vs MoS Required to next Shipment";
 		}
 		if ($region > 0) {
 			$region_object = Regions::getRegion($region);
-			$title = "MOS Available at " . $region_object -> name." Vs. MoS Needed to  Next Refill" ;
+			$title = "MOS Available at " . $region_object -> name . " Vs. MoS Needed to  Next Refill";
 		}
 		if ($district > 0) {
 			$district_object = Districts::getDistrict($district);
@@ -61,28 +61,28 @@ class Months_Of_Stock extends MY_Controller {
 		$year = date('Y');
 		$population = 0;
 		if ($national > 0) {
-			$population = Regional_Populations::getNationalPopulation($year); 
+			$population = Regional_Populations::getNationalPopulation($year);
 		}
 		if ($region > 0) {
-			$population = Regional_Populations::getRegionalPopulation($region, $year); 
+			$population = Regional_Populations::getRegionalPopulation($region, $year);
 		}
 		if ($district > 0) {
-			$population = District_Populations::getDistrictPopulation($district, $year); 
+			$population = District_Populations::getDistrictPopulation($district, $year);
 		}
 
 		foreach ($vaccines as $vaccine_object) {
 			$months_of_stock = array();
 			$year = date('Y');
 			$now = date('U');
-			
+
 			$stock_balance = 0;
-			if ($national > 0) { 
+			if ($national > 0) {
 				$stock_balance = Disbursements::getNationalPeriodBalance($vaccine_object -> id, $now);
 			}
-			if ($region > 0) { 
+			if ($region > 0) {
 				$stock_balance = Disbursements::getRegionalPeriodBalance($region, $vaccine_object -> id, $now);
 			}
-			if ($district > 0) { 
+			if ($district > 0) {
 				$stock_balance = Disbursements::getDistrictPeriodBalance($district, $vaccine_object -> id, $now);
 			}
 
@@ -195,14 +195,17 @@ class Months_Of_Stock extends MY_Controller {
 					if (isset($days_till_shipment)) {
 						$months_till_shipment = number_format(($days_till_shipment / 30), 1);
 					}
+				} else {
+					$months_till_shipment = 3;
+					$next_shipment = "N/A";
 				}
 			}
 			if ($region > 0) {
-				$months_till_shipment = 3;
+				$months_till_shipment = 2;
 				$next_shipment = "N/A";
 			}
 			if ($district > 0) {
-				$months_till_shipment = 3;
+				$months_till_shipment = 2;
 				$next_shipment = "N/A";
 			}
 

@@ -13,7 +13,7 @@ class Regions extends Doctrine_Record {
 	}
 
 	public function getAllRegions() {
-		$query = Doctrine_Query::create() -> select("id,name") -> from("Regions");
+		$query = Doctrine_Query::create() -> select("id,name") -> from("Regions")->orderBy("name");
 		$provinces = $query -> execute();
 		return $provinces;
 	}
