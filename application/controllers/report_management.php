@@ -28,6 +28,9 @@ class Report_Management extends MY_Controller {
 		if ($report == "issues") {
 			redirect("vaccine_issues_management");
 		}
+		if ($report == "district_stock_outs") {
+			redirect("district_stock_out");
+		}
 		//Code for getting the Store summaries at the various vaccine store around the country
 		if ($report == "store_summaries") {
 			$data['quick_link'] = "store_summaries";

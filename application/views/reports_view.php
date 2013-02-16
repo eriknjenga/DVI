@@ -19,6 +19,7 @@ overflow:hidden;
 <div id="dashboard_menu">
 <a href="<?php echo site_url("Report_Management/view_report/consumption");?>" class="quick_menu_link <?php if($quick_link == "consumption"){echo "quick_menu_active";}?>">Consumption</a> 
 <a href="<?php echo site_url("Report_Management/view_report/issues");?>" class="quick_menu_link <?php if($quick_link == "issues"){echo "quick_menu_active";}?>">Stock Issues</a>
+<a style="width: 200px;" href="<?php echo site_url("Report_Management/view_report/district_stock_outs");?>" class="quick_menu_link <?php if($quick_link == "district_stock_out"){echo "quick_menu_active";}?>">District Stock Status Recipients</a>
 </div>
 <?php 
 $this->load->view($report);
